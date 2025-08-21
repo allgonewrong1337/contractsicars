@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Car Rental Contract</title>
+<style>
+  body { font-family: Arial, sans-serif; margin: 20px; }
+  label { display: block; margin: 10px 0 5px; }
+  input { padding: 8px; width: 100%; max-width: 300px; }
+  button { margin-top: 10px; padding: 10px; cursor: pointer; border: none; border-radius: 5px; }
+  .blue-btn { background: #007BFF; color: #fff; }
+  .blue-btn:hover { background: #0056b3; }
+  .red-btn { background: #FF4136; color: #fff; margin-top:20px; }
+  .red-btn:hover { background: #c12b1f; }
+  .contract { border: 1px solid #ccc; padding: 20px; margin-top: 20px; white-space: pre-wrap; }
+  #signatureModal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); justify-content: center; align-items: center; }
+  .modal-content { background: #fff; padding: 20px; border-radius: 8px; text-align: center; max-width: 400px; width: 100%; }
+  #signatureCanvas { border: 1px solid #000; width: 100%; height: 200px; touch-action: none; }
+</style>
+</head>
+<body>
+
+<div id="formSection">
+  <h2>Create Contract</h2>
+  <label>Client Name:</label>
+  <input type="text" id="clientName">
+
+  <label>Phone Number:</label>
+  <input type="tel" id="phone" pattern="[0-9]+" placeholder="Only numbers">
+
+  <label>Driving License:</label>
+  <input type="text" id="license">
+
+  <label>Date From:</label>
+  <input type="date" id="from">
+
+  <label>Date To:</label>
+  <input type="date" id="to">
+
+  <button class="blue-btn" onclick="generateContract()">Generate Contract</button>
+</div>
+
+<div id="contractSection" style="display:none;">
+  <h2>SIMON ABBQUD Car Rental Contract</h2>
+  <div class="contract" id="contractContent">
+    <pre id="contractText">
+NIF/CIF: B72700586
+NOMBRE: SIMON ABBQUD
+NIE: Y-6074507-Z
+Dirección: Calle Antonio Ruiz Corces 31
+Teléfono office: +34642482422
+Simón: +34673504340
+
+CONTRATO DE ALQUILER DE COCHES
+
+Nombre y Apellido: <span id="showClientName"></span>          Fecha de inicio: <span id="showFrom"></span>
+Licencia der Conductor: <span id="showLicense"></span>        Fecha de finalización: <span id="showTo"></span>
+Teléfono: <span id="showPhone"></span>                        Dirección:
+
+Términos y condiciones
+
+Uso del vehículo: El vehículo no se utilizará con fines ilegales ni se conducirá bajo la influencia de drogas o alcohol.
+
+Límite de edad: El inquilino confirma que tiene al menos 23 años. Los inquilinos menores de 23 años no son elegibles para alquilar ni conducir el automóvil.
+
+Licencia de conducir: El inquilino debe tener una licencia de conducir válida y estar preparado para mostrarla en el momento del alquiler.
+
+Restricciones geográficas: El arrendatario acepta que el vehículo sólo puede circular dentro de un radio de 250 km desde Torrevieja, España. Si el arrendatario desea circular fuera de esta zona, deberá contratar un seguro adicional. Este seguro cubre cualquier responsabilidad en la que se incurra a la circular fuera de la zona especificada.
+
+Política de devolución: El vehículo debe devolverse en la fecha de finalización especificada en las mismas condiciones en que se recibió, excluyendo el desgaste normal. Las devoluciones tardías pueden generar cargos adicionales.
+
+Responsabilidad por Daños: Si el vehículo es conducido por un conductor menor de 23 años, ese conductor será personalmente responsable de cualquier daño al vehículo de alquiler y de cualquier daño causado a vehículos o propiedad de terceros durante el período de alquiler.
+
+Aceptación de Términos
+Al firmar a continuación, ambas partes reconocen y aceptan todos los términos y condiciones de este contrato.
+
+___________________________
+Firma
+    </pre>
+
+    <h3>Signature:</h3>
+    <button class="blue-btn" onclick="openSignature()">✍️ Click here to sign</button>
+    <p id="signedStatus" style="color:green;display:none;">✔ Signature captured</p>
+    <canvas id="signaturePreview" style="border:1px solid #000; display:block; margin-top:10px; max-width:400px;"></canvas>
+
+    <button class="red-btn" onclick="downloadPDF()">Download Contract as PDF</button>
+  </div>
+</div>
+
+<div id="signatureModal">
+  <div class="modal-content">
+    <h3>Draw Your Signature</h3>
+    <canvas id="signatureCanvas"></canvas><br>
+    <button onclick="clearSignature()">Clear</button>
+    <button onclick="saveSignature()">Save</button>
+    <button onclick="closeSignature()">Cancel</button>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+let canvas, ctx, drawing = false, signatureData = null;
+
+function generateContract() {
+  const clientName = document.getElementById('clientName').value;
+  const phone = document.getElementById('phone').value;
+  const license = document.getElementById('license').value;
+  const from = document.getElementById('from').value;
+  const to = document.getElementById('to').value;
+
+  if(!clientName || !phone || !license || !from || !to) {
+    alert("Please fill in all fields!");
+    return;
+  }
+
+  document.getElementById("showClientName").textContent = clientName;
+  document.getElementById("showPhone").textContent = phone;
+  document.getElementById("showLicense").textContent = license;
+  document.getElementById("showFrom").textContent = from;
+  document.getElementById("showTo").textContent = to;
+
+  document.getElementById("formSection").style.display = "none";
+  document.getElementById("contractSection").style.display = "block";
+}
+
+function openSignature() {
+  document.getElementById("signatureModal").style.display = "flex";
+  setupCanvas();
+}
+
+function closeSignature() { document.getElementById("signatureModal").style.display = "none"; }
+
+function setupCanvas() {
+  canvas = document.getElementById("signatureCanvas");
+  ctx = canvas.getContext("2d");
+  canvas.width = canvas.offsetWidth;
+  canvas.height = 200;
+  ctx.strokeStyle = "#000";
+  ctx.lineWidth = 2;
+
+  function getXY(e) {
+    const rect = canvas.getBoundingClientRect();
+    if(e.touches && e.touches.length>0) return {x:e.touches[0].clientX-rect.left, y:e.touches[0].clientY-rect.top};
+    return {x:e.offsetX, y:e.offsetY};
+  }
+
+  function startDraw(e){drawing=true;const {x,y}=getXY(e);ctx.beginPath();ctx.moveTo(x,y);e.preventDefault();}
+  function draw(e){if(!drawing)return;const {x,y}=getXY(e);ctx.lineTo(x,y);ctx.stroke();e.preventDefault();}
+  function stopDraw(e){drawing=false;e.preventDefault();}
+
+  canvas.onmousedown=startDraw; canvas.onmousemove=draw; canvas.onmouseup=stopDraw; canvas.onmouseout=stopDraw;
+  canvas.ontouchstart=startDraw; canvas.ontouchmove=draw; canvas.ontouchend=stopDraw;
+}
+
+function clearSignature() { ctx.clearRect(0,0,canvas.width,canvas.height); }
+
+function saveSignature() {
+  signatureData = canvas.toDataURL();
+  document.getElementById("signedStatus").style.display = "block";
+
+  const preview = document.getElementById("signaturePreview");
+  const pctx = preview.getContext("2d");
+  preview.width = preview.offsetWidth;
+  preview.height = 100;
+  const img = new Image();
+  img.onload = () => { pctx.clearRect(0,0,preview.width,preview.height); pctx.drawImage(img,0,0,preview.width,preview.height); }
+  img.src = signatureData;
+
+  closeSignature();
+}
+
+function downloadPDF() {
+  if(!signatureData) { alert("Please sign the contract first!"); return; }
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+
+  // First page blank or with title
+  doc.setFontSize(16);
+  doc.text("Sicars Car Rental Contract", 10, 20);
+
+  // Second page with full contract
+  doc.addPage();
+  doc.setFontSize(12);
+  const contractText = document.getElementById("contractText").innerText;
+  doc.text(contractText, 10, 20, { maxWidth: 180 });
+
+  // Add signature image
+  doc.addImage(signatureData, 'PNG', 10, 250, 100, 50);
+
+  const clientName = document.getElementById('showClientName').textContent;
+  doc.save(`Contract_${clientName.replace(/\s+/g,'_')}.pdf`);
+}
+</script>
+</body>
+</html>
+
