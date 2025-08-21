@@ -13,7 +13,7 @@
   .blue-btn:hover { background: #0056b3; }
   .red-btn { background: #FF4136; color: #fff; margin-top:20px; }
   .red-btn:hover { background: #c12b1f; }
-  .contract { border: 1px solid #ccc; padding: 20px; margin-top: 20px; white-space: pre-wrap; }
+  .contract { border: 1px solid #ccc; padding: 20px; margin-top: 20px; white-space: pre-wrap; font-family: 'Consolas', monospace; }
   #signatureModal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); justify-content: center; align-items: center; }
   .modal-content { background: #fff; padding: 20px; border-radius: 8px; text-align: center; max-width: 400px; width: 100%; }
   #signatureCanvas { border: 1px solid #000; width: 100%; height: 200px; touch-action: none; }
@@ -32,11 +32,17 @@
   <label>Driving License:</label>
   <input type="text" id="license">
 
+  <label>Car Plate Number:</label>
+  <input type="text" id="plate">
+
   <label>Date From:</label>
   <input type="date" id="from">
 
   <label>Date To:</label>
   <input type="date" id="to">
+
+  <label>Total Cost (€):</label>
+  <input type="number" step="0.01" id="total">
 
   <button class="blue-btn" onclick="generateContract()">Generate Contract</button>
 </div>
@@ -44,7 +50,7 @@
 <div id="contractSection" style="display:none;">
   <h2>Sicars Car Rental Contract</h2>
   <div class="contract" id="contractContent">
-    <pre id="contractText">
+<pre id="contractText">
 NIF/CIF: B72700586
 NOMBRE: SIMON ABBOUD
 NIE: Y-6074507-Z
@@ -54,9 +60,14 @@ Simón: +46735043440
 
 CONTRATO DE ALQUILER DE COCHES
 
-Nombre y Apellido: <span id="showClientName"></span>          Fecha de inicio: <span id="showFrom"></span>
-Licencia der Conductor: <span id="showLicense"></span>        Fecha de finalización: <span id="showTo"></span>
-Teléfono: <span id="showPhone"></span>                        Dirección:
+Nombre y Apellido: <span id="showClientName"></span>  
+Fecha de inicio: <span id="showFrom"></span>  
+Licencia del Conductor: <span id="showLicense"></span>  
+Fecha de finalización: <span id="showTo"></span>  
+Teléfono: <span id="showPhone"></span>  
+Dirección:  
+Matrícula: <span id="showPlate"></span>  
+Precio Total: €<span id="showTotal"></span>  
 
 Términos y condiciones
 
@@ -77,13 +88,16 @@ Al firmar a continuación, ambas partes reconocen y aceptan todos los términos 
 
 ___________________________
 Firma
-    </pre>
+</pre>
 
     <h3>Signature:</h3>
     <button class="blue-btn" onclick="openSignature()">✍️ Click here to sign</button>
     <p id="signedStatus" style="color:green;display:none;">✔ Signature captured</p>
     <canvas id="signaturePreview" style="border:1px solid #000; display:block; margin-top:10px; max-width:400px;"></canvas>
 
+    <label>Enter your email to receive the contract:</label>
+    <input type="email" id="clientEmail" placeholder="your@email.com">
+    <button class="blue-btn" onclick="sendEmail()">Send Contract via Email</button>
     <button class="red-btn" onclick="downloadPDF()">Download Contract as PDF</button>
   </div>
 </div>
@@ -99,26 +113,28 @@ Firma
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
 <script>
+emailjs.init("Ct6aXWOv0UiEYTK42");
+
 let canvas, ctx, drawing = false, signatureData = null;
 
 function generateContract() {
-  const clientName = document.getElementById('clientName').value;
-  const phone = document.getElementById('phone').value;
-  const license = document.getElementById('license').value;
-  const from = document.getElementById('from').value;
-  const to = document.getElementById('to').value;
-
-  if(!clientName || !phone || !license || !from || !to) {
-    alert("Please fill in all fields!");
-    return;
-  }
+  const clientName = document.getElementById('clientName').value || "";
+  const phone = document.getElementById('phone').value || "";
+  const license = document.getElementById('license').value || "";
+  const plate = document.getElementById('plate').value || "";
+  const from = document.getElementById('from').value || "";
+  const to = document.getElementById('to').value || "";
+  const total = document.getElementById('total').value || "";
 
   document.getElementById("showClientName").textContent = clientName;
   document.getElementById("showPhone").textContent = phone;
   document.getElementById("showLicense").textContent = license;
+  document.getElementById("showPlate").textContent = plate;
   document.getElementById("showFrom").textContent = from;
   document.getElementById("showTo").textContent = to;
+  document.getElementById("showTotal").textContent = total ? parseFloat(total).toFixed(2) : "";
 
   document.getElementById("formSection").style.display = "none";
   document.getElementById("contractSection").style.display = "block";
@@ -170,26 +186,103 @@ function saveSignature() {
   closeSignature();
 }
 
+function getContractTextForPDF() {
+  const clientName = document.getElementById('showClientName').textContent || "";
+  const phone = document.getElementById('showPhone').textContent || "";
+  const license = document.getElementById('showLicense').textContent || "";
+  const from = document.getElementById('showFrom').textContent || "";
+  const to = document.getElementById('showTo').textContent || "";
+  const plate = document.getElementById('showPlate').textContent || "";
+  const total = document.getElementById('showTotal').textContent || "";
+
+  return `NIF/CIF: B72700586
+NOMBRE: SIMON ABBOUD
+NIE: Y-6074507-Z
+Dirección: Calle Antonio Ruiz Corces 31
+Teléfono office: +34642482422
+Simón: +46735043440
+
+CONTRATO DE ALQUILER DE COCHES
+
+Nombre y Apellido: ${clientName}
+Fecha de inicio: ${from}
+Licencia del Conductor: ${license}
+Fecha de finalización: ${to}
+Teléfono: ${phone}
+Dirección:
+Matrícula: ${plate}
+Precio Total: €${total}
+
+Términos y condiciones
+
+Uso del vehículo: El vehículo no se utilizará con fines ilegales ni se conducirá bajo la influencia de drogas o alcohol.
+
+Límite de edad: El inquilino confirma que tiene al menos 23 años. Los inquilinos menores de 23 años no son elegibles para alquilar ni conducir el automóvil.
+
+Licencia de conducir: El inquilino debe tener una licencia de conducir válida y estar preparado para mostrarla en el momento del alquiler.
+
+Restricciones geográficas: El arrendatario acepta que el vehículo sólo puede circular dentro de un radio de 250 km desde Torrevieja, España. Si el arrendatario desea circular fuera de esta zona, deberá obtener autorización previa por escrito.
+
+Política de devolución: El vehículo debe devolverse en la fecha de finalización especificada en las mismas condiciones en que se recibió, excluyendo el desgaste normal. Las devoluciones tardías pueden estar sujetas a cargos adicionales.
+
+Responsabilidad por Daños: Si el vehículo es conducido por un conductor menor de 23 años, ese conductor será personalmente responsable de cualquier daño al vehículo de alquiler y de cualquier daño a terceros.
+
+Aceptación de Términos
+Al firmar a continuación, ambas partes reconocen y aceptan todos los términos y condiciones de este contrato.
+
+___________________________
+Firma
+`;
+}
+
 function downloadPDF() {
   if(!signatureData) { alert("Please sign the contract first!"); return; }
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
 
-  // First page blank or with title
-  doc.setFontSize(16);
-  doc.text("Sicars Car Rental Contract", 10, 20);
-
-  // Second page with full contract
-  doc.addPage();
   doc.setFontSize(12);
-  const contractText = document.getElementById("contractText").innerText;
-  doc.text(contractText, 10, 20, { maxWidth: 180 });
+  doc.text(getContractTextForPDF(), 10, 20, { maxWidth: 180 });
 
-  // Add signature image
   doc.addImage(signatureData, 'PNG', 10, 250, 100, 50);
 
-  const clientName = document.getElementById('showClientName').textContent;
+  const clientName = document.getElementById('showClientName').textContent || "contract";
   doc.save(`Contract_${clientName.replace(/\s+/g,'_')}.pdf`);
+}
+
+function sendEmail() {
+  const clientEmail = document.getElementById("clientEmail").value;
+  if (!clientEmail) {
+    alert("Please enter your email!");
+    return;
+  }
+
+  const clientName = document.getElementById('showClientName').textContent || "";
+  const phone = document.getElementById('showPhone').textContent || "";
+  const license = document.getElementById('showLicense').textContent || "";
+  const plate = document.getElementById('showPlate').textContent || "";
+  const from = document.getElementById('showFrom').textContent || "";
+  const to = document.getElementById('showTo').textContent || "";
+  const total = document.getElementById('showTotal').textContent || "";
+
+  emailjs.send(
+    'service_a709mgr',
+    'template_2ifazx8',
+    {
+      client_name: clientName,
+      phone: phone,
+      license: license,
+      plate: plate,
+      from_date: from,
+      to_date: to,
+      total_cost: total,
+      signature: signatureData,
+      to_email: clientEmail
+    },
+    'Ct6aXWOv0UiEYTK42'
+  ).then(
+    function(response) { alert("Contract sent successfully!"); },
+    function(error) { alert("Failed to send contract. Try again."); console.error(error); }
+  );
 }
 </script>
 </body>
