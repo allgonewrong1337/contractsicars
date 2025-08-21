@@ -5,15 +5,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Sicars Car Rental Contract</title>
 <style>
-  body { font-family: Arial, sans-serif; margin: 20px; }
+  body { font-family: Arial, sans-serif; margin: 20px; line-height: 1.6; }
   label { display: block; margin: 10px 0 5px; }
-  input { padding: 8px; width: 100%; max-width: 300px; }
+  input, select { padding: 8px; width: 100%; max-width: 300px; }
   button { margin-top: 10px; padding: 10px; cursor: pointer; border: none; border-radius: 5px; }
   .blue-btn { background: #007BFF; color: #fff; }
   .blue-btn:hover { background: #0056b3; }
   .red-btn { background: #FF4136; color: #fff; margin-top:20px; }
   .red-btn:hover { background: #c12b1f; }
-  .contract { border: 1px solid #ccc; padding: 20px; margin-top: 20px; white-space: pre-wrap; font-family: 'Consolas', monospace; }
+  .contract { border: 1px solid #ccc; padding: 20px; margin-top: 20px; font-size: 14px; }
+  .contract p { margin: 8px 0; }
   #signatureModal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); justify-content: center; align-items: center; }
   .modal-content { background: #fff; padding: 20px; border-radius: 8px; text-align: center; max-width: 400px; width: 100%; }
   #signatureCanvas { border: 1px solid #000; width: 100%; height: 200px; touch-action: none; }
@@ -32,14 +33,33 @@
   <label>Driving License:</label>
   <input type="text" id="license">
 
+  <label>Car Brand:</label>
+  <input type="text" id="brand">
+
   <label>Car Plate Number:</label>
   <input type="text" id="plate">
+
+  <label>Units:</label>
+  <select id="units">
+    <option value="1">1</option>
+    <option value="2">2</option>
+    <option value="3">3</option>
+    <option value="4">4</option>
+    <option value="5">5</option>
+    <option value="6">6</option>
+    <option value="7">7</option>
+    <option value="8">8</option>
+    <option value="9">9</option>
+  </select>
 
   <label>Date From:</label>
   <input type="date" id="from">
 
   <label>Date To:</label>
   <input type="date" id="to">
+
+  <label>IVA (€):</label>
+  <input type="number" step="0.01" id="iva">
 
   <label>Total Cost (€):</label>
   <input type="number" step="0.01" id="total">
@@ -50,50 +70,42 @@
 <div id="contractSection" style="display:none;">
   <h2>Sicars Car Rental Contract</h2>
   <div class="contract" id="contractContent">
-<pre id="contractText">
-NIF/CIF: B72700586
-NOMBRE: SIMON ABBOUD
-NIE: Y-6074507-Z
-Dirección: Calle Antonio Ruiz Corces 31
-Teléfono office: +34642482422
-Simón: +46735043440
 
-CONTRATO DE ALQUILER DE COCHES
+    <p><strong>NIF/CIF:</strong> B72700586</p>
+    <p><strong>NOMBRE:</strong> SIMON ABBOUD</p>
+    <p><strong>NIE:</strong> Y-6074507-Z</p>
+    <p><strong>Dirección:</strong> Calle Antonio Ruiz Corces 31</p>
+    <p><strong>Teléfono office:</strong> +34642482422</p>
+    <p><strong>Simón:</strong> +46735043440</p>
 
-Nombre y Apellido: <span id="showClientName"></span>  
-Fecha de inicio: <span id="showFrom"></span>  
-Licencia del Conductor: <span id="showLicense"></span>  
-Fecha de finalización: <span id="showTo"></span>  
-Teléfono: <span id="showPhone"></span>  
-Dirección:  
-Matrícula: <span id="showPlate"></span>  
-Precio Total: €<span id="showTotal"></span>  
+    <h3>Rental Contract</h3>
+    <p><strong>Client:</strong> <span id="showClientName"></span></p>
+    <p><strong>Phone:</strong> <span id="showPhone"></span></p>
+    <p><strong>License:</strong> <span id="showLicense"></span></p>
+    <p><strong>Car Brand:</strong> <span id="showBrand"></span></p>
+    <p><strong>Plate:</strong> <span id="showPlate"></span></p>
+    <p><strong>Units:</strong> <span id="showUnits"></span></p>
+    <p><strong>From:</strong> <span id="showFrom"></span></p>
+    <p><strong>To:</strong> <span id="showTo"></span></p>
+    <p><strong>IVA:</strong> €<span id="showIVA"></span></p>
+    <p><strong>Total:</strong> €<span id="showTotal"></span></p>
 
-Términos y condiciones
+    <h3>Terms & Conditions</h3>
+    <p><strong>Uso del vehículo:</strong> El vehículo no se utilizará con fines ilegales ni se conducirá bajo la influencia de drogas o alcohol.</p>
+    <p><strong>Límite de edad:</strong> El inquilino confirma que tiene al menos 23 años. Los inquilinos menores de 23 años no son elegibles para alquilar ni conducir el automóvil.</p>
+    <p><strong>Licencia de conducir:</strong> El inquilino debe tener una licencia de conducir válida y estar preparado para mostrarla en el momento del alquiler.</p>
+    <p><strong>Restricciones geográficas:</strong> El arrendatario acepta que el vehículo sólo puede circular dentro de un radio de 250 km desde Torrevieja, España. Si desea circular fuera de esta zona, deberá obtener autorización previa por escrito.</p>
+    <p><strong>Política de devolución:</strong> El vehículo debe devolverse en la fecha de finalización especificada en las mismas condiciones en que se recibió, excluyendo el desgaste normal. Las devoluciones tardías pueden estar sujetas a cargos adicionales.</p>
+    <p><strong>Responsabilidad por Daños:</strong> Si el vehículo es conducido por un conductor menor de 23 años, ese conductor será personalmente responsable de cualquier daño al vehículo de alquiler y de cualquier daño a terceros.</p>
 
-Uso del vehículo: El vehículo no se utilizará con fines ilegales ni se conducirá bajo la influencia de drogas o alcohol.
+    <h3>Aceptación de Términos</h3>
+    <p>Al firmar a continuación, ambas partes reconocen y aceptan todos los términos y condiciones de este contrato.</p>
 
-Límite de edad: El inquilino confirma que tiene al menos 23 años. Los inquilinos menores de 23 años no son elegibles para alquilar ni conducir el automóvil.
+    <p>___________________________ <br> Firma</p>
 
-Licencia de conducir: El inquilino debe tener una licencia de conducir válida y estar preparado para mostrarla en el momento del alquiler.
-
-Restricciones geográficas: El arrendatario acepta que el vehículo sólo puede circular dentro de un radio de 250 km desde Torrevieja, España. Si el arrendatario desea circular fuera de esta zona, deberá obtener autorización previa por escrito.
-
-Política de devolución: El vehículo debe devolverse en la fecha de finalización especificada en las mismas condiciones en que se recibió, excluyendo el desgaste normal. Las devoluciones tardías pueden estar sujetas a cargos adicionales.
-
-Responsabilidad por Daños: Si el vehículo es conducido por un conductor menor de 23 años, ese conductor será personalmente responsable de cualquier daño al vehículo de alquiler y de cualquier daño a terceros.
-
-Aceptación de Términos
-Al firmar a continuación, ambas partes reconocen y aceptan todos los términos y condiciones de este contrato.
-
-___________________________
-Firma
-</pre>
-
-    <h3>Signature:</h3>
+    <canvas id="signaturePreview" style="border:1px solid #000; display:block; margin:10px 0; max-width:400px;"></canvas>
     <button class="blue-btn" onclick="openSignature()">✍️ Click here to sign</button>
     <p id="signedStatus" style="color:green;display:none;">✔ Signature captured</p>
-    <canvas id="signaturePreview" style="border:1px solid #000; display:block; margin-top:10px; max-width:400px;"></canvas>
 
     <label>Enter your email to receive the contract:</label>
     <input type="email" id="clientEmail" placeholder="your@email.com">
@@ -102,6 +114,7 @@ Firma
   </div>
 </div>
 
+<!-- Signature Modal -->
 <div id="signatureModal">
   <div class="modal-content">
     <h3>Draw Your Signature</h3>
@@ -123,18 +136,24 @@ function generateContract() {
   const clientName = document.getElementById('clientName').value || "";
   const phone = document.getElementById('phone').value || "";
   const license = document.getElementById('license').value || "";
+  const brand = document.getElementById('brand').value || "";
   const plate = document.getElementById('plate').value || "";
+  const units = document.getElementById('units').value || "";
   const from = document.getElementById('from').value || "";
   const to = document.getElementById('to').value || "";
   const total = document.getElementById('total').value || "";
+  const iva = document.getElementById('iva').value || "";
 
   document.getElementById("showClientName").textContent = clientName;
   document.getElementById("showPhone").textContent = phone;
   document.getElementById("showLicense").textContent = license;
+  document.getElementById("showBrand").textContent = brand;
   document.getElementById("showPlate").textContent = plate;
+  document.getElementById("showUnits").textContent = units;
   document.getElementById("showFrom").textContent = from;
   document.getElementById("showTo").textContent = to;
   document.getElementById("showTotal").textContent = total ? parseFloat(total).toFixed(2) : "";
+  document.getElementById("showIVA").textContent = iva ? parseFloat(iva).toFixed(2) : "";
 
   document.getElementById("formSection").style.display = "none";
   document.getElementById("contractSection").style.display = "block";
@@ -190,10 +209,13 @@ function getContractTextForPDF() {
   const clientName = document.getElementById('showClientName').textContent || "";
   const phone = document.getElementById('showPhone').textContent || "";
   const license = document.getElementById('showLicense').textContent || "";
+  const brand = document.getElementById('showBrand').textContent || "";
+  const plate = document.getElementById('showPlate').textContent || "";
+  const units = document.getElementById('showUnits').textContent || "";
   const from = document.getElementById('showFrom').textContent || "";
   const to = document.getElementById('showTo').textContent || "";
-  const plate = document.getElementById('showPlate').textContent || "";
   const total = document.getElementById('showTotal').textContent || "";
+  const iva = document.getElementById('showIVA').textContent || "";
 
   return `NIF/CIF: B72700586
 NOMBRE: SIMON ABBOUD
@@ -204,32 +226,26 @@ Simón: +46735043440
 
 CONTRATO DE ALQUILER DE COCHES
 
-Nombre y Apellido: ${clientName}
-Fecha de inicio: ${from}
-Licencia del Conductor: ${license}
-Fecha de finalización: ${to}
+Cliente: ${clientName}
 Teléfono: ${phone}
-Dirección:
+Licencia: ${license}
+Marca del coche: ${brand}
 Matrícula: ${plate}
+Unidades: ${units}
+Fecha inicio: ${from}
+Fecha finalización: ${to}
+IVA: €${iva}
 Precio Total: €${total}
 
-Términos y condiciones
+Términos y condiciones:
+- Uso del vehículo: El vehículo no se utilizará con fines ilegales ni bajo drogas/alcohol.
+- Límite de edad: mínimo 23 años.
+- Licencia válida requerida.
+- Restricción geográfica: 250 km desde Torrevieja salvo autorización.
+- Devolución en fecha, en mismo estado.
+- Menores de 23: responsables de daños.
 
-Uso del vehículo: El vehículo no se utilizará con fines ilegales ni se conducirá bajo la influencia de drogas o alcohol.
-
-Límite de edad: El inquilino confirma que tiene al menos 23 años. Los inquilinos menores de 23 años no son elegibles para alquilar ni conducir el automóvil.
-
-Licencia de conducir: El inquilino debe tener una licencia de conducir válida y estar preparado para mostrarla en el momento del alquiler.
-
-Restricciones geográficas: El arrendatario acepta que el vehículo sólo puede circular dentro de un radio de 250 km desde Torrevieja, España. Si el arrendatario desea circular fuera de esta zona, deberá obtener autorización previa por escrito.
-
-Política de devolución: El vehículo debe devolverse en la fecha de finalización especificada en las mismas condiciones en que se recibió, excluyendo el desgaste normal. Las devoluciones tardías pueden estar sujetas a cargos adicionales.
-
-Responsabilidad por Daños: Si el vehículo es conducido por un conductor menor de 23 años, ese conductor será personalmente responsable de cualquier daño al vehículo de alquiler y de cualquier daño a terceros.
-
-Aceptación de Términos
-Al firmar a continuación, ambas partes reconocen y aceptan todos los términos y condiciones de este contrato.
-
+Aceptación de términos:
 ___________________________
 Firma
 `;
@@ -256,25 +272,20 @@ function sendEmail() {
     return;
   }
 
-  const clientName = document.getElementById('showClientName').textContent || "";
-  const phone = document.getElementById('showPhone').textContent || "";
-  const license = document.getElementById('showLicense').textContent || "";
-  const plate = document.getElementById('showPlate').textContent || "";
-  const from = document.getElementById('showFrom').textContent || "";
-  const to = document.getElementById('showTo').textContent || "";
-  const total = document.getElementById('showTotal').textContent || "";
-
   emailjs.send(
     'service_a709mgr',
     'template_2ifazx8',
     {
-      client_name: clientName,
-      phone: phone,
-      license: license,
-      plate: plate,
-      from_date: from,
-      to_date: to,
-      total_cost: total,
+      client_name: document.getElementById('showClientName').textContent,
+      phone: document.getElementById('showPhone').textContent,
+      license: document.getElementById('showLicense').textContent,
+      brand: document.getElementById('showBrand').textContent,
+      plate: document.getElementById('showPlate').textContent,
+      units: document.getElementById('showUnits').textContent,
+      from_date: document.getElementById('showFrom').textContent,
+      to_date: document.getElementById('showTo').textContent,
+      total_cost: document.getElementById('showTotal').textContent,
+      iva: document.getElementById('showIVA').textContent,
       signature: signatureData,
       to_email: clientEmail
     },
