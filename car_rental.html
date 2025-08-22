@@ -18,7 +18,6 @@
   #signatureModal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); justify-content: center; align-items: center; }
   .modal-content { background: #fff; padding: 20px; border-radius: 8px; text-align: center; max-width: 400px; width: 100%; }
   #signatureCanvas { border: 1px solid #000; width: 100%; height: 200px; touch-action: none; }
-
   /* Two-column layout */
   .two-columns { display: flex; justify-content: flex-start; margin-top: 15px; gap: 50px; }
   .col { width: 45%; }
@@ -113,9 +112,9 @@
     <h3>Aceptación de Términos</h3>
     <p>Al firmar a continuación, ambas partes reconocen y aceptan todos los términos y condiciones de este contrato.</p>
 
+    <canvas id="signaturePreview" style="border:1px solid #000; display:block; margin:10px 0; max-width:400px;"></canvas>
     <p>___________________________ <br> Firma</p>
 
-    <canvas id="signaturePreview" style="border:1px solid #000; display:block; margin:10px 0; max-width:400px;"></canvas>
     <button class="blue-btn" onclick="openSignature()">✍️ Click here to sign</button>
     <p id="signedStatus" style="color:green;display:none;">✔ Signature captured</p>
 
@@ -323,11 +322,11 @@ function downloadPDF() {
 
   // Signature line and image
   const sigLineY = afterTermsY + 8 + acceptWrapped.length * 6 + 10;
+  if (signatureData) {
+    doc.addImage(signatureData, 'PNG', 60, sigLineY - 30, 60, 30);
+  }
   doc.text("___________________________", 10, sigLineY);
   doc.text("Firma", 10, sigLineY + 7);
-  if (signatureData) {
-    doc.addImage(signatureData, 'PNG', 60, sigLineY - 10, 60, 30);
-  }
 
   const clientName = document.getElementById('showClientName').textContent || "contract";
   doc.save(`Contract_${clientName.replace(/\s+/g,'_')}.pdf`);
