@@ -322,11 +322,11 @@ function downloadPDF() {
 
   // Signature line and image
   const sigLineY = afterTermsY + 8 + acceptWrapped.length * 6 + 10;
-  if (signatureData) {
-    doc.addImage(signatureData, 'PNG', 60, sigLineY - 30, 60, 30);
-  }
   doc.text("___________________________", 10, sigLineY);
   doc.text("Firma", 10, sigLineY + 7);
+  if (signatureData) {
+    doc.addImage(signatureData, 'PNG', 10, sigLineY - 10, 60, 10); // Adjusted to be directly above the line
+  }
 
   const clientName = document.getElementById('showClientName').textContent || "contract";
   doc.save(`Contract_${clientName.replace(/\s+/g,'_')}.pdf`);
