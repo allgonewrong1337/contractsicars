@@ -18,6 +18,10 @@
   #signatureModal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); justify-content: center; align-items: center; }
   .modal-content { background: #fff; padding: 20px; border-radius: 8px; text-align: center; max-width: 400px; width: 100%; }
   #signatureCanvas { border: 1px solid #000; width: 100%; height: 200px; touch-action: none; }
+
+  /* Two-column layout */
+  .two-columns { display: flex; justify-content: flex-start; margin-top: 15px; gap: 50px; }
+  .col { width: 45%; }
 </style>
 </head>
 <body>
@@ -79,16 +83,24 @@
     <p><strong>Simón:</strong> +46735043440</p>
 
     <h3>Rental Contract</h3>
-    <p><strong>Client:</strong> <span id="showClientName"></span></p>
-    <p><strong>Phone:</strong> <span id="showPhone"></span></p>
-    <p><strong>License:</strong> <span id="showLicense"></span></p>
-    <p><strong>Car Brand:</strong> <span id="showBrand"></span></p>
-    <p><strong>Plate:</strong> <span id="showPlate"></span></p>
-    <p><strong>Units:</strong> <span id="showUnits"></span></p>
-    <p><strong>From:</strong> <span id="showFrom"></span></p>
-    <p><strong>To:</strong> <span id="showTo"></span></p>
-    <p><strong>IVA:</strong> €<span id="showIVA"></span></p>
-    <p><strong>Total:</strong> €<span id="showTotal"></span></p>
+
+    <div class="two-columns">
+      <div class="col">
+        <p><strong>Client:</strong> <span id="showClientName"></span></p>
+        <p><strong>Phone:</strong> <span id="showPhone"></span></p>
+        <p><strong>License:</strong> <span id="showLicense"></span></p>
+        <p><strong>Car Brand:</strong> <span id="showBrand"></span></p>
+        <p><strong>Plate:</strong> <span id="showPlate"></span></p>
+      </div>
+
+      <div class="col">
+        <p><strong>Units:</strong> <span id="showUnits"></span></p>
+        <p><strong>From:</strong> <span id="showFrom"></span></p>
+        <p><strong>To:</strong> <span id="showTo"></span></p>
+        <p><strong>IVA:</strong> €<span id="showIVA"></span></p>
+        <p><strong>Total:</strong> €<span id="showTotal"></span></p>
+      </div>
+    </div>
 
     <h3>Terms & Conditions</h3>
     <p><strong>Uso del vehículo:</strong> El vehículo no se utilizará con fines ilegales ni se conducirá bajo la influencia de drogas o alcohol.</p>
@@ -128,6 +140,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
 <script>
+// Init EmailJS
 emailjs.init("Ct6aXWOv0UiEYTK42");
 
 let canvas, ctx, drawing = false, signatureData = null;
@@ -188,7 +201,7 @@ function setupCanvas() {
   canvas.ontouchstart=startDraw; canvas.ontouchmove=draw; canvas.ontouchend=stopDraw;
 }
 
-function clearSignature() { ctx.clearRect(0,0,canvas.width,canvas.height); }
+function clearSignature() { if(ctx){ ctx.clearRect(0,0,canvas.width,canvas.height); } }
 
 function saveSignature() {
   signatureData = canvas.toDataURL();
@@ -199,7 +212,7 @@ function saveSignature() {
   preview.width = preview.offsetWidth;
   preview.height = 100;
   const img = new Image();
-  img.onload = () => { pctx.clearRect(0,0,preview.width,preview.height); pctx.drawImage(img,0,0,preview.width,preview.height); }
+  img.onload = () => { pctx.clearRect(0,0,preview.width,preview.height); pctx.drawImage(img,0,0,preview.width,preview.height); };
   img.src = signatureData;
 
   closeSignature();
@@ -226,11 +239,14 @@ Simón: +46735043440
 
 CONTRATO DE ALQUILER DE COCHES
 
+[Columna 1]
 Cliente: ${clientName}
 Teléfono: ${phone}
 Licencia: ${license}
 Marca del coche: ${brand}
 Matrícula: ${plate}
+
+[Columna 2]
 Unidades: ${units}
 Fecha inicio: ${from}
 Fecha finalización: ${to}
@@ -257,9 +273,61 @@ function downloadPDF() {
   const doc = new jsPDF();
 
   doc.setFontSize(12);
-  doc.text(getContractTextForPDF(), 10, 20, { maxWidth: 180 });
 
-  doc.addImage(signatureData, 'PNG', 10, 250, 100, 50);
+  // Header info
+  doc.text("NIF/CIF: B72700586", 10, 20);
+  doc.text("NOMBRE: SIMON ABBOUD", 10, 27);
+  doc.text("NIE: Y-6074507-Z", 10, 34);
+  doc.text("Dirección: Calle Antonio Ruiz Corces 31", 10, 41);
+  doc.text("Teléfono office: +34642482422", 10, 48);
+  doc.text("Simón: +46735043440", 10, 55);
+
+  doc.text("CONTRATO DE ALQUILER DE COCHES", 10, 70);
+
+  // Two-column layout in PDF
+  const leftX = 10, rightX = 110, yStart = 85, lineHeight = 7;
+
+  doc.text(`Cliente: ${document.getElementById('showClientName').textContent}`, leftX, yStart);
+  doc.text(`Teléfono: ${document.getElementById('showPhone').textContent}`, leftX, yStart + lineHeight);
+  doc.text(`Licencia: ${document.getElementById('showLicense').textContent}`, leftX, yStart + lineHeight*2);
+  doc.text(`Marca del coche: ${document.getElementById('showBrand').textContent}`, leftX, yStart + lineHeight*3);
+  doc.text(`Matrícula: ${document.getElementById('showPlate').textContent}`, leftX, yStart + lineHeight*4);
+
+  doc.text(`Unidades: ${document.getElementById('showUnits').textContent}`, rightX, yStart);
+  doc.text(`Fecha inicio: ${document.getElementById('showFrom').textContent}`, rightX, yStart + lineHeight);
+  doc.text(`Fecha finalización: ${document.getElementById('showTo').textContent}`, rightX, yStart + lineHeight*2);
+  doc.text(`IVA: €${document.getElementById('showIVA').textContent}`, rightX, yStart + lineHeight*3);
+  doc.text(`Precio Total: €${document.getElementById('showTotal').textContent}`, rightX, yStart + lineHeight*4);
+
+  // Terms & Conditions in PDF
+  let detailsEndY = Math.max(yStart + lineHeight*4, yStart + lineHeight*4);
+  let termsTitleY = detailsEndY + 15;
+  doc.setFont(undefined, "bold");
+  doc.text("Términos & Condiciones", 10, termsTitleY);
+  doc.setFont(undefined, "normal");
+
+  const terms = "Términos y condiciones:\n- Uso del vehículo: El vehículo no se utilizará con fines ilegales ni se conducirá bajo la influencia de drogas o alcohol.\n- Límite de edad: El inquilino confirma que tiene al menos 23 años. Los inquilinos menores de 23 años no son elegibles para alquilar ni conducir el automóvil.\n- Licencia de conducir: El inquilino debe tener una licencia de conducir válida y estar preparado para mostrarla en el momento del alquiler.\n- Restricciones geográficas: El arrendatario acepta que el vehículo sólo puede circular dentro de un radio de 250 km desde Torrevieja, España. Si desea circular fuera de esta zona, deberá obtener autorización previa por escrito.\n- Política de devolución: El vehículo debe devolverse en la fecha de finalización especificada en las mismas condiciones en que se recibió, excluyendo el desgaste normal. Las devoluciones tardías pueden estar sujetas a cargos adicionales.\n- Responsabilidad por Daños: Si el vehículo es conducido por un conductor menor de 23 años, ese conductor será personalmente responsable de cualquier daño al vehículo de alquiler y de cualquier daño a terceros.";
+
+  const wrapped = doc.splitTextToSize(terms, 180);
+  const termsBodyY = termsTitleY + 8;
+  doc.text(wrapped, 10, termsBodyY);
+
+  // Acceptance + signature
+  const afterTermsY = termsBodyY + wrapped.length * 6 + 8;
+  doc.setFont(undefined, "bold");
+  doc.text("Aceptación de Términos", 10, afterTermsY);
+  doc.setFont(undefined, "normal");
+  const acceptText = "Al firmar a continuación, ambas partes reconocen y aceptan todos los términos y condiciones de este contrato.";
+  const acceptWrapped = doc.splitTextToSize(acceptText, 180);
+  doc.text(acceptWrapped, 10, afterTermsY + 8);
+
+  // Signature line and image
+  const sigLineY = afterTermsY + 8 + acceptWrapped.length * 6 + 10;
+  doc.text("___________________________", 10, sigLineY);
+  doc.text("Firma", 10, sigLineY + 7);
+  if (signatureData) {
+    doc.addImage(signatureData, 'PNG', 60, sigLineY - 10, 60, 30);
+  }
 
   const clientName = document.getElementById('showClientName').textContent || "contract";
   doc.save(`Contract_${clientName.replace(/\s+/g,'_')}.pdf`);
@@ -295,6 +363,15 @@ function sendEmail() {
     function(error) { alert("Failed to send contract. Try again."); console.error(error); }
   );
 }
+
+// Ensure functions exist on window for inline onclick handlers
+window.generateContract = generateContract;
+window.openSignature = openSignature;
+window.closeSignature = closeSignature;
+window.clearSignature = clearSignature;
+window.saveSignature = saveSignature;
+window.downloadPDF = downloadPDF;
+window.sendEmail = sendEmail;
 </script>
 </body>
 </html>
