@@ -111,9 +111,9 @@
 
     <h3>Aceptación de Términos</h3>
     <p>Al firmar a continuación, ambas partes reconocen y aceptan todos los términos y condiciones de este contrato.</p>
-
+    <p>Firma</p>
     <canvas id="signaturePreview" style="border:1px solid #000; display:block; margin:10px 0; max-width:400px;"></canvas>
-    <p>___________________________ <br> Firma</p>
+    <p>___________________________</p>
 
     <button class="blue-btn" onclick="openSignature()">✍️ Click here to sign</button>
     <p id="signedStatus" style="color:green;display:none;">✔ Signature captured</p>
@@ -261,8 +261,9 @@ Términos y condiciones:
 - Menores de 23: responsables de daños.
 
 Aceptación de términos:
-___________________________
+Al firmar a continuación, ambas partes reconocen y aceptan todos los términos y condiciones de este contrato.
 Firma
+___________________________
 `;
 }
 
@@ -321,11 +322,11 @@ function downloadPDF() {
   doc.text(acceptWrapped, 10, afterTermsY + 8);
 
   // Signature line and image
-  const sigLineY = afterTermsY + 8 + acceptWrapped.length * 6 + 10;
-  doc.text("___________________________", 10, sigLineY);
-  doc.text("Firma", 10, sigLineY + 7);
+  const sigLineY = afterTermsY + 8 + acceptWrapped.length * 6 + 30; // Moved line and signature further down
+  doc.text("Firma", 10, sigLineY - 20); // "Firma" text moved up for distance
+  doc.text("___________________________", 10, sigLineY); // Line at new position
   if (signatureData) {
-    doc.addImage(signatureData, 'PNG', 10, sigLineY - 10, 60, 10); // Adjusted to be directly above the line
+    doc.addImage(signatureData, 'PNG', 10, sigLineY - 15, 60, 15); // Signature just above the line
   }
 
   const clientName = document.getElementById('showClientName').textContent || "contract";
