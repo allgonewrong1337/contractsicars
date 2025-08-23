@@ -329,6 +329,50 @@
   .language-option.active {
     display: block;
   }
+
+  /* Loading spinner */
+  .loading-spinner {
+    display: none;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #007BFF;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    animation: spin 1s linear infinite;
+    margin: 10px auto;
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  /* Email status messages */
+  .email-status {
+    text-align: center;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 5px;
+    display: none;
+  }
+
+  .email-success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+  }
+
+  .email-error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+  }
+
+  .email-warning {
+    background-color: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeeba;
+  }
 </style>
 </head>
 <body>
@@ -434,7 +478,7 @@
         <p><strong>Körkort:</strong> Kunden måste ha ett giltigt körkort och vara beredd att visa upp det vid uthyrningstillfället.</p>
         <p><strong>Geografiska begränsningar:</strong> Kunden accepterar att fordonet endast får köras inom en radie av 250 km från Torrevieja, Spanien. Om du vill köra utanför detta område måste du först få skriftligt tillstånd.</p>
         <p><strong>Återlämningspolicy:</strong> Fordonet måste återlämnas på det angivna slutdatumet i samma skick som det mottogs, exklusive normalt slitage. Sena återlämningar kan medföra extra avgifter.</p>
-        <p><strong>Ansvar för skador:</strong> Om fordonet körs av en förare under 23 år, är den föraren personligt ansvarig för eventuella skador på hyrbilen och eventuella skador på tredje part.</p>
+        <p><strong>Ansvar för skador:</strong> Om fordonet körs van en förare under 23 år, är den föraren personligt ansvarig för eventuella skador på hyrbilen och eventuella skador på tredje part.</p>
       </div>
 
       <div class="language-option" data-lang="en">
@@ -461,6 +505,24 @@
 
       <label data-es="Ingrese su email para recibir el contrato:" data-sv="Ange din e-post för att få kontraktet:" data-en="Enter your email to receive the contract:">Ingrese su email para recibir el contrato:</label>
       <input type="email" id="clientEmail" placeholder="su@email.com">
+      
+      <!-- Email sending status area -->
+      <div class="loading-spinner" id="emailLoading"></div>
+      <div class="email-status" id="emailSuccess">
+        <p data-es="✔ Contrato enviado correctamente. Por favor, revise su carpeta de correo no deseado si no puede encontrarlo en su bandeja de entrada." 
+           data-sv="✔ Kontrakt skickat! Kontrollera din skräppost om du inte hittar det i inkorgen." 
+           data-en="✔ Contract sent successfully! Please check your junk mail folder if you can't find it in your inbox.">
+           ✔ Contrato enviado correctamente. Por favor, revise su carpeta de correo no deseado si no puede encontrarlo en su bandeja de entrada.
+        </p>
+      </div>
+      <div class="email-status email-error" id="emailError">
+        <p data-es="✗ Error al enviar el contrato. Por favor, inténtelo de nuevo." 
+           data-sv="✗ Fel vid sändning av kontrakt. Försök igen." 
+           data-en="✗ Failed to send contract. Please try again.">
+           ✗ Error al enviar el contrato. Por favor, inténtelo de nuevo.
+        </p>
+      </div>
+      
       <button class="blue-btn" onclick="sendEmail()" data-es="Enviar Contrato por Email" data-sv="Skicka Kontrakt via E-post" data-en="Send Contract via Email">Enviar Contrato por Email</button>
       <button class="red-btn" onclick="downloadPDF()" data-es="Descargar Contrato como PDF" data-sv="Ladda ner Kontrakt som PDF" data-en="Download Contract as PDF">Descargar Contrato como PDF</button>
     </div>
@@ -479,7 +541,7 @@
   </div>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umm.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
 <script>
 // Init EmailJS
@@ -810,6 +872,11 @@ function sendEmail() {
     return;
   }
 
+  // Show loading spinner and hide any previous messages
+  document.getElementById('emailLoading').style.display = 'block';
+  document.getElementById('emailSuccess').style.display = 'none';
+  document.getElementById('emailError').style.display = 'none';
+
   emailjs.send(
     'service_a709mgr',
     'template_2ifazx8',
@@ -830,14 +897,25 @@ function sendEmail() {
     'Ct6aXWOv0UiEYTK42'
   ).then(
     function(response) { 
-      alert(currentLanguage === 'es' ? "¡Contrato enviado correctamente!" : 
-            currentLanguage === 'sv' ? "Kontrakt skickat!" :
-            "Contract sent successfully!"); 
+      // Hide loading spinner
+      document.getElementById('emailLoading').style.display = 'none';
+      
+      // Show success message
+      document.getElementById('emailSuccess').style.display = 'block';
+      
+      // Update success message based on language
+      changeLanguage(currentLanguage);
     },
     function(error) { 
-      alert(currentLanguage === 'es' ? "Error al enviar el contrato. Inténtelo de nuevo." : 
-            currentLanguage === 'sv' ? "Fel vid sändning av kontrakt. Försök igen." :
-            "Failed to send contract. Try again."); 
+      // Hide loading spinner
+      document.getElementById('emailLoading').style.display = 'none';
+      
+      // Show error message
+      document.getElementById('emailError').style.display = 'block';
+      
+      // Update error message based on language
+      changeLanguage(currentLanguage);
+      
       console.error(error); 
     }
   );
