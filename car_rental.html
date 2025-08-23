@@ -140,7 +140,7 @@
 <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
 <script>
 // Init EmailJS
-emailjs.init("Ct6aXWOv0UiEYTK42");
+emailjs.init("Ct10aXWOv0UiEYTK42");
 
 let canvas, ctx, drawing = false, signatureData = null;
 
@@ -321,13 +321,24 @@ function downloadPDF() {
   const acceptWrapped = doc.splitTextToSize(acceptText, 180);
   doc.text(acceptWrapped, 10, afterTermsY + 8);
 
-  // Signature line and image
-  const sigLineY = afterTermsY + 8 + acceptWrapped.length * 6 + 30; // Moved line and signature further down
-  doc.text("Firma", 10, sigLineY - 20); // "Firma" text moved up for distance
-  doc.text("___________________________", 10, sigLineY); // Line at new position
+  // Signature lines
+  const sigLineY = afterTermsY + 8 + acceptWrapped.length * 6 + 30;
+  doc.text("Firma del Cliente", 10, sigLineY - 20);
+  doc.text("___________________________", 10, sigLineY);
   if (signatureData) {
-    doc.addImage(signatureData, 'PNG', 10, sigLineY - 15, 60, 15); // Signature just above the line
+    const sigWidth = 60;
+    const sigX = 10 + (70 - sigWidth) / 2; // Center the signature image on the 70-unit line
+    doc.addImage(signatureData, 'PNG', sigX, sigLineY - 15, sigWidth, 15);
   }
+  doc.text("___________________________", 130, sigLineY); // Copied line to right side
+  // Company text shifted left, centered within a narrower range
+  doc.setFontSize(10);
+  doc.text("SICARS", 145, sigLineY - 25); // Moved left from 165 to 145
+  doc.text("RENT - SALE - BUY", 145, sigLineY - 20);
+  doc.text("C/ Antonio Ruiz Covés N° 31", 145, sigLineY - 15);
+  doc.text("03183 Torrevieja", 145, sigLineY - 10);
+  doc.text("Y 6074507Z", 145, sigLineY - 5);
+  doc.text("Tel. +34 642 482 422", 145, sigLineY);
 
   const clientName = document.getElementById('showClientName').textContent || "contract";
   doc.save(`Contract_${clientName.replace(/\s+/g,'_')}.pdf`);
@@ -373,5 +384,3 @@ window.saveSignature = saveSignature;
 window.downloadPDF = downloadPDF;
 window.sendEmail = sendEmail;
 </script>
-</body>
-</html>
