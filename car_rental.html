@@ -1,138 +1,481 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sicars Car Rental Contract</title>
+<title>Sicars Contrato de Alquiler de Coches</title>
 <style>
-  body { font-family: Arial, sans-serif; margin: 20px; line-height: 1.6; }
-  label { display: block; margin: 10px 0 5px; }
-  input, select { padding: 8px; width: 100%; max-width: 300px; }
-  button { margin-top: 10px; padding: 10px; cursor: pointer; border: none; border-radius: 5px; }
-  .blue-btn { background: #007BFF; color: #fff; }
-  .blue-btn:hover { background: #0056b3; }
-  .red-btn { background: #FF4136; color: #fff; margin-top:20px; }
-  .red-btn:hover { background: #c12b1f; }
-  .contract { border: 1px solid #ccc; padding: 20px; margin-top: 20px; font-size: 14px; }
-  .contract p { margin: 8px 0; }
-  #signatureModal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); justify-content: center; align-items: center; }
-  .modal-content { background: #fff; padding: 20px; border-radius: 8px; text-align: center; max-width: 400px; width: 100%; }
-  #signatureCanvas { border: 1px solid #000; width: 100%; height: 200px; touch-action: none; }
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+  
+  body { 
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+    margin: 20px; 
+    line-height: 1.6; 
+    background-color: #f8f9fa;
+    color: #333;
+  }
+  
+  .container {
+    max-width: 1000px;
+    margin: 0 auto;
+    background: white;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.1);
+  }
+  
+  h2 {
+    color: #007BFF;
+    margin-bottom: 20px;
+    text-align: center;
+    border-bottom: 2px solid #007BFF;
+    padding-bottom: 10px;
+  }
+  
+  h3 {
+    color: #0056b3;
+    margin: 20px 0 15px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  label { 
+    display: block; 
+    margin: 15px 0 8px; 
+    font-weight: 600;
+  }
+  
+  input, select { 
+    padding: 12px; 
+    width: 100%; 
+    max-width: 400px; 
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+  }
+  
+  button { 
+    margin-top: 15px; 
+    padding: 14px 20px; 
+    cursor: pointer; 
+    border: none; 
+    border-radius: 5px; 
+    font-size: 16px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+  }
+  
+  .blue-btn { 
+    background: #007BFF; 
+    color: #fff; 
+  }
+  
+  .blue-btn:hover { 
+    background: #0056b3; 
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  }
+  
+  .red-btn { 
+    background: #FF4136; 
+    color: #fff; 
+    margin-top: 20px; 
+  }
+  
+  .red-btn:hover { 
+    background: #c12b1f; 
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  }
+
+  .green-btn { 
+    background: #28a745; 
+    color: #fff; 
+    padding: 8px 15px;
+    font-size: 14px;
+    margin: 5px;
+  }
+  
+  .green-btn:hover { 
+    background: #218838; 
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  }
+
+  .purple-btn { 
+    background: #6f42c1; 
+    color: #fff; 
+    padding: 8px 15px;
+    font-size: 14px;
+    margin: 5px;
+  }
+  
+  .purple-btn:hover { 
+    background: #5a36a9; 
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  }
+  
+  .contract { 
+    border: 1px solid #ccc; 
+    padding: 25px; 
+    margin-top: 25px; 
+    font-size: 15px; 
+    border-radius: 8px;
+    background: #fff;
+  }
+  
+  .contract p { 
+    margin: 10px 0; 
+  }
+  
+  #signatureModal { 
+    display: none; 
+    position: fixed; 
+    z-index: 1000; 
+    left: 0; 
+    top: 0; 
+    width: 100%; 
+    height: 100%; 
+    background: rgba(0,0,0,0.7); 
+    justify-content: center; 
+    align-items: center; 
+  }
+  
+  .modal-content { 
+    background: #fff; 
+    padding: 25px; 
+    border-radius: 10px; 
+    text-align: center; 
+    max-width: 500px; 
+    width: 95%;
+    box-shadow: 0 5px 25px rgba(0,0,0,0.3);
+  }
+  
+  #signatureCanvas { 
+    border: 2px solid #007BFF; 
+    width: 100%; 
+    height: 200px; 
+    touch-action: none; 
+    border-radius: 5px;
+    background: #f9f9f9;
+  }
+  
   /* Two-column layout */
-  .two-columns { display: flex; justify-content: flex-start; margin-top: 15px; gap: 50px; }
-  .col { width: 45%; }
+  .two-columns { 
+    display: flex; 
+    justify-content: flex-start; 
+    margin-top: 20px; 
+    gap: 40px;
+    flex-wrap: wrap;
+  }
+  
+  .col { 
+    width: 100%;
+    max-width: 400px;
+  }
+  
+  /* New styles for signature section */
+  .signature-container { 
+    margin: 25px 0; 
+    padding: 20px; 
+    border: 2px dashed #007BFF; 
+    border-radius: 8px; 
+    text-align: center; 
+    background: #f0f8ff;
+  }
+  
+  .signature-preview-container {
+    position: relative;
+    margin: 20px 0;
+    min-height: 120px;
+    display: flex;
+    justify-content: center;
+  }
+  
+  #signaturePreview { 
+    border: 1px solid #aaa; 
+    display: block; 
+    margin: 0 auto; 
+    max-width: 100%; 
+    background-color: white;
+    border-radius: 5px;
+    width: 350px;
+    height: 120px;
+  }
+  
+  .signature-btn { 
+    padding: 16px 30px; 
+    font-size: 18px; 
+    margin: 15px auto; 
+    display: block; 
+    width: 100%;
+    max-width: 350px;
+  }
+  
+  .signature-instruction {
+    color: #666;
+    font-style: italic;
+    margin-top: 10px;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    body {
+      margin: 10px;
+    }
+    
+    .container {
+      padding: 15px;
+    }
+    
+    .two-columns {
+      gap: 20px;
+    }
+    
+    input, select {
+      max-width: 100%;
+    }
+    
+    .contract {
+      padding: 15px;
+    }
+    
+    .signature-container {
+      padding: 15px;
+    }
+    
+    #signaturePreview {
+      width: 100%;
+      height: 100px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    button {
+      width: 100%;
+    }
+    
+    .modal-content {
+      padding: 15px;
+      width: 95%;
+    }
+    
+    .signature-btn {
+      padding: 14px 20px;
+      font-size: 16px;
+    }
+  }
+  
+  /* Form element focus styles */
+  input:focus, select:focus {
+    outline: none;
+    border-color: #007BFF;
+    box-shadow: 0 0 0 3px rgba(0,123,255,0.25);
+  }
+  
+  /* Modal button styles */
+  .modal-content button {
+    margin: 10px 5px;
+    padding: 10px 15px;
+    display: inline-block;
+    width: auto;
+  }
+  
+  /* Success message */
+  .success-message {
+    color: #28a745;
+    font-weight: 600;
+    text-align: center;
+    margin-top: 10px;
+  }
+  
+  /* Optional field indicator */
+  .optional {
+    color: #6c757d;
+    font-weight: normal;
+    font-size: 0.9em;
+  }
+  
+  /* Required field indicator */
+  .required-field::after {
+    content: " *";
+    color: #FF4136;
+  }
+
+  /* Translation section */
+  .translation-section {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border-radius: 5px;
+    border-left: 4px solid #28a745;
+  }
+
+  .translation-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 10px 0;
+  }
+
+  .language-option {
+    display: none;
+  }
+
+  .language-option.active {
+    display: block;
+  }
 </style>
 </head>
 <body>
 
-<div id="formSection">
-  <h2>Create Contract</h2>
-  <label>Client Name:</label>
-  <input type="text" id="clientName">
+<div class="container">
+  <div id="formSection">
+    <h2 data-es="Crear Contrato" data-sv="Skapa Kontrakt" data-en="Create Contract">Crear Contrato</h2>
+    
+    <label class="required-field" data-es="Nombre del Cliente:" data-sv="Kundens Namn:" data-en="Client Name:">Nombre del Cliente:</label>
+    <input type="text" id="clientName" placeholder="Ingrese nombre completo" required>
 
-  <label>Phone Number:</label>
-  <input type="tel" id="phone" pattern="[0-9]+" placeholder="Only numbers">
+    <label class="required-field" data-es="Número de Teléfono:" data-sv="Telefonnummer:" data-en="Phone Number:">Número de Teléfono:</label>
+    <input type="tel" id="phone" pattern="[0-9]+" placeholder="Solo números (ej. 123456789)" required>
 
-  <label>Driving License:</label>
-  <input type="text" id="license">
+    <label data-es="Licencia de Conducir:" data-sv="Körkort:" data-en="Driving License:">Licencia de Conducir: <span class="optional" data-es="(opcional)" data-sv="(valfri)" data-en="(optional)">(opcional)</span></label>
+    <input type="text" id="license" placeholder="Ingrese número de licencia">
 
-  <label>Car Brand:</label>
-  <input type="text" id="brand">
+    <label data-es="Marca del Coche:" data-sv="Bilmärke:" data-en="Car Brand:">Marca del Coche: <span class="optional" data-es="(opcional)" data-sv="(valfri)" data-en="(optional)">(opcional)</span></label>
+    <input type="text" id="brand" placeholder="Ingrese marca y modelo">
 
-  <label>Car Plate Number:</label>
-  <input type="text" id="plate">
+    <label data-es="Número de Matrícula:" data-sv="Registreringsnummer:" data-en="Plate Number:">Número de Matrícula: <span class="optional" data-es="(opcional)" data-sv="(valfri)" data-en="(optional)">(opcional)</span></label>
+    <input type="text" id="plate" placeholder="Ingrese número de matrícula">
 
-  <label>Units:</label>
-  <select id="units">
-    <option value="1">1</option>
-    <option value="2">2</option>
-    <option value="3">3</option>
-    <option value="4">4</option>
-    <option value="5">5</option>
-    <option value="6">6</option>
-    <option value="7">7</option>
-    <option value="8">8</option>
-    <option value="9">9</option>
-  </select>
+    <label data-es="Unidades:" data-sv="Enheter:" data-en="Units:">Unidades: <span class="optional" data-es="(opcional)" data-sv="(valfri)" data-en="(optional)">(opcional)</span></label>
+    <select id="units">
+      <option value="1" selected>1</option>
+      <option value="2">2</option>
+      <option value="3">3</option>
+      <option value="4">4</option>
+      <option value="5">5</option>
+      <option value="6">6</option>
+      <option value="7">7</option>
+      <option value="8">8</option>
+      <option value="9">9</option>
+    </select>
 
-  <label>Date From:</label>
-  <input type="date" id="from">
+    <label data-es="Fecha Desde:" data-sv="Datum Från:" data-en="Date From:">Fecha Desde: <span class="optional" data-es="(opcional)" data-sv="(valfri)" data-en="(optional)">(opcional)</span></label>
+    <input type="date" id="from">
 
-  <label>Date To:</label>
-  <input type="date" id="to">
+    <label data-es="Fecha Hasta:" data-sv="Datum Till:" data-en="Date To:">Fecha Hasta: <span class="optional" data-es="(opcional)" data-sv="(valfri)" data-en="(optional)">(opcional)</span></label>
+    <input type="date" id="to">
 
-  <label>IVA (€):</label>
-  <input type="number" step="0.01" id="iva">
+    <label data-es="IVA:" data-sv="Moms:" data-en="VAT:">IVA: <span class="optional" data-es="(opcional)" data-sv="(valfri)" data-en="(optional)">(opcional)</span></label>
+    <input type="number" id="iva" pattern="[0-9]*" placeholder="Ingrese importe de IVA" onkeypress="return event.charCode >= 48 && event.charCode <= 57">
 
-  <label>Total Cost (€):</label>
-  <input type="number" step="0.01" id="total">
+    <label data-es="Coste Total:" data-sv="Total Kostnad:" data-en="Total Cost:">Coste Total: <span class="optional" data-es="(opcional)" data-sv="(valfri)" data-en="(optional)">(opcional)</span></label>
+    <input type="number" id="total" pattern="[0-9]*" placeholder="Ingrese coste total" onkeypress="return event.charCode >= 48 && event.charCode <= 57">
 
-  <button class="blue-btn" onclick="generateContract()">Generate Contract</button>
-</div>
+    <button class="blue-btn" onclick="generateContract()" data-es="Generar Contrato" data-sv="Generera Kontrakt" data-en="Generate Contract">Generar Contrato</button>
+  </div>
 
-<div id="contractSection" style="display:none;">
-  <h2>Sicars Car Rental Contract</h2>
-  <div class="contract" id="contractContent">
+  <div id="contractSection" style="display:none;">
+    <h2 data-es="Sicars Contrato de Alquiler de Coches" data-sv="Sicars Biluthyrningsavtal" data-en="Sicars Car Rental Contract">Sicars Contrato de Alquiler de Coches</h2>
+    <div class="contract" id="contractContent">
 
-    <p><strong>NIF/CIF:</strong> B72700586</p>
-    <p><strong>NOMBRE:</strong> SIMON ABBOUD</p>
-    <p><strong>NIE:</strong> Y-6074507-Z</p>
-    <p><strong>Dirección:</strong> Calle Antonio Ruiz Corces 31</p>
-    <p><strong>Teléfono office:</strong> +34642482422</p>
-    <p><strong>Simón:</strong> +46735043440</p>
+      <p><strong data-es="NIF/CIF:" data-sv="NIF/CIF:" data-en="NIF/CIF:">NIF/CIF:</strong> B72700586</p>
+      <p><strong data-es="NOMBRE:" data-sv="NAMN:" data-en="NAME:">NOMBRE:</strong> SIMON ABBOUD</p>
+      <p><strong data-es="NIE:" data-sv="NIE:" data-en="NIE:">NIE:</strong> Y-6074507-Z</p>
+      <p><strong data-es="Dirección:" data-sv="Adress:" data-en="Address:">Dirección:</strong> Calle Antonio Ruiz Corces 31</p>
+      <p><strong data-es="Teléfono office:" data-sv="Kontorstelefon:" data-en="Office Phone:">Teléfono office:</strong> +34642482422</p>
+      <p><strong data-es="Simón:" data-sv="Simón:" data-en="Simón:">Simón:</strong> +46735043440</p>
 
-    <h3>Rental Contract</h3>
+      <h3 data-es="Contrato de Alquiler" data-sv="Uthyrningsavtal" data-en="Rental Contract">Contrato de Alquiler</h3>
 
-    <div class="two-columns">
-      <div class="col">
-        <p><strong>Client:</strong> <span id="showClientName"></span></p>
-        <p><strong>Phone:</strong> <span id="showPhone"></span></p>
-        <p><strong>License:</strong> <span id="showLicense"></span></p>
-        <p><strong>Car Brand:</strong> <span id="showBrand"></span></p>
-        <p><strong>Plate:</strong> <span id="showPlate"></span></p>
+      <div class="two-columns">
+        <div class="col">
+          <p><strong data-es="Cliente:" data-sv="Kund:" data-en="Client:">Cliente:</strong> <span id="showClientName"></span></p>
+          <p><strong data-es="Teléfono:" data-sv="Telefon:" data-en="Phone:">Teléfono:</strong> <span id="showPhone"></span></p>
+          <p><strong data-es="Licencia:" data-sv="Körkort:" data-en="License:">Licencia:</strong> <span id="showLicense"></span></p>
+          <p><strong data-es="Marca del Coche:" data-sv="Bilmärke:" data-en="Car Brand:">Marca del Coche:</strong> <span id="showBrand"></span></p>
+          <p><strong data-es="Matrícula:" data-sv="Registreringsnummer:" data-en="Plate:">Matrícula:</strong> <span id="showPlate"></span></p>
+        </div>
+
+        <div class="col">
+          <p><strong data-es="Unidades:" data-sv="Enheter:" data-en="Units:">Unidades:</strong> <span id="showUnits"></span></p>
+          <p><strong data-es="Desde:" data-sv="Från:" data-en="From:">Desde:</strong> <span id="showFrom"></span></p>
+          <p><strong data-es="Hasta:" data-sv="Till:" data-en="To:">Hasta:</strong> <span id="showTo"></span></p>
+          <p><strong data-es="IVA:" data-sv="Moms:" data-en="VAT:">IVA:</strong> <span id="showIVA"></span> €</p>
+          <p><strong data-es="Total:" data-sv="Totalt:" data-en="Total:">Total:</strong> <span id="showTotal"></span> €</p>
+        </div>
       </div>
 
-      <div class="col">
-        <p><strong>Units:</strong> <span id="showUnits"></span></p>
-        <p><strong>From:</strong> <span id="showFrom"></span></p>
-        <p><strong>To:</strong> <span id="showTo"></span></p>
-        <p><strong>IVA:</strong> €<span id="showIVA"></span></p>
-        <p><strong>Total:</strong> €<span id="showTotal"></span></p>
+      <div class="translation-buttons">
+        <button class="green-btn" onclick="changeLanguage('es')">Español</button>
+        <button class="green-btn" onclick="changeLanguage('sv')">Svenska</button>
+        <button class="purple-btn" onclick="changeLanguage('en')">English</button>
       </div>
+
+      <h3 data-es="Términos y Condiciones" data-sv="Villkor" data-en="Terms & Conditions">Términos y Condiciones</h3>
+      
+      <div class="language-option active" data-lang="es">
+        <p><strong>Uso del vehículo:</strong> El vehículo no se utilizará con fines ilegales ni se conducirá bajo la influencia de drogas o alcohol.</p>
+        <p><strong>Límite de edad:</strong> El inquilino confirma que tiene al menos 23 años. Los inquilinos menores de 23 años no son elegibles para alquilar ni conducir el automóvil.</p>
+        <p><strong>Licencia de conducir:</strong> El inquilino debe tener una licencia de conducir válida y estar preparado para mostrarla en el momento del alquiler.</p>
+        <p><strong>Restricciones geográficas:</strong> El arrendatario acepta que el vehículo sólo puede circular dentro de un radio de 250 km desde Torrevieja, España. Si desea circular fuera de esta zona, deberá obtener autorización previa por escrito.</p>
+        <p><strong>Política de devolución:</strong> El vehículo debe devolverse en la fecha de finalización especificada en las mismas condiciones en que se recibió, excluyendo el desgaste normal. Las devoluciones tardías pueden estar sujetas a cargos adicionales.</p>
+        <p><strong>Responsabilidad por Daños:</strong> Si el vehículo es conducido por un conductor menor de 23 años, ese conductor será personalmente responsable de cualquier daño al vehículo de alquiler y de cualquier daño a terceros.</p>
+      </div>
+
+      <div class="language-option" data-lang="sv">
+        <p><strong>Användning av fordonet:</strong> Fordonet får inte användas för olagliga ändamål eller köras under påverkan av droger eller alkohol.</p>
+        <p><strong>Åldersgräns:</strong> Kunden bekräftar att han/hon är minst 23 år gammal. Kunder under 23 år är inte berättigade att hyra eller köra bilen.</p>
+        <p><strong>Körkort:</strong> Kunden måste ha ett giltigt körkort och vara beredd att visa upp det vid uthyrningstillfället.</p>
+        <p><strong>Geografiska begränsningar:</strong> Kunden accepterar att fordonet endast får köras inom en radie av 250 km från Torrevieja, Spanien. Om du vill köra utanför detta område måste du först få skriftligt tillstånd.</p>
+        <p><strong>Återlämningspolicy:</strong> Fordonet måste återlämnas på det angivna slutdatumet i samma skick som det mottogs, exklusive normalt slitage. Sena återlämningar kan medföra extra avgifter.</p>
+        <p><strong>Ansvar för skador:</strong> Om fordonet körs av en förare under 23 år, är den föraren personligt ansvarig för eventuella skador på hyrbilen och eventuella skador på tredje part.</p>
+      </div>
+
+      <div class="language-option" data-lang="en">
+        <p><strong>Vehicle use:</strong> The vehicle will not be used for illegal purposes or driven under the influence of drugs or alcohol.</p>
+        <p><strong>Age limit:</strong> The customer confirms that they are at least 23 years old. Customers under 23 years old are not eligible to rent or drive the car.</p>
+        <p><strong>Driver's license:</strong> The customer must have a valid driver's license and be prepared to show it at the time of rental.</p>
+        <p><strong>Geographical restrictions:</strong> The customer accepts that the vehicle may only be driven within a radius of 250 km from Torrevieja, Spain. If you wish to drive outside this area, you must first obtain written authorization.</p>
+        <p><strong>Return policy:</strong> The vehicle must be returned on the specified end date in the same condition as it was received, excluding normal wear and tear. Late returns may be subject to additional charges.</p>
+        <p><strong>Liability for damages:</strong> If the vehicle is driven by a driver under 23 years of age, that driver will be personally responsible for any damage to the rental vehicle and any damage to third parties.</p>
+      </div>
+
+      <h3 data-es="Aceptación de Términos" data-sv="Godkännande av Villkor" data-en="Acceptance of Terms">Aceptación de Términos</h3>
+      <p data-es="Al firmar a continuación, ambas partes reconocen y aceptan todos los términos y condiciones de este contrato." data-sv="Genom att underteckna nedan erkänner och accepterar båda parter alla villkor i detta avtal." data-en="By signing below, both parties acknowledge and accept all terms and conditions of this contract.">Al firmar a continuación, ambas partes reconocen y aceptan todos los términos y condiciones de este contrato.</p>
+      
+      <div class="signature-container">
+        <p><strong data-es="Firma del Cliente" data-sv="Kundens Namnteckning" data-en="Client Signature">Firma del Cliente</strong></p>
+        <p class="signature-instruction" data-es="Por favor, firme en el recuadro inferior" data-sv="Vänligen signera i rutan nedan" data-en="Please sign in the box below">Por favor, firme en el recuadro inferior</p>
+        <div class="signature-preview-container">
+          <canvas id="signaturePreview"></canvas>
+        </div>
+        <button class="blue-btn signature-btn" onclick="openSignature()" data-es="✍️ Haga clic aquí para firmar" data-sv="✍️ Klicka här för att signera" data-en="✍️ Click here to sign">✍️ Haga clic aquí para firmar</button>
+        <p id="signedStatus" class="success-message" style="display:none;" data-es="✔ Firma capturada correctamente" data-sv="✔ Signatur har sparats" data-en="✔ Signature captured successfully">✔ Firma capturada correctamente</p>
+      </div>
+
+      <label data-es="Ingrese su email para recibir el contrato:" data-sv="Ange din e-post för att få kontraktet:" data-en="Enter your email to receive the contract:">Ingrese su email para recibir el contrato:</label>
+      <input type="email" id="clientEmail" placeholder="su@email.com">
+      <button class="blue-btn" onclick="sendEmail()" data-es="Enviar Contrato por Email" data-sv="Skicka Kontrakt via E-post" data-en="Send Contract via Email">Enviar Contrato por Email</button>
+      <button class="red-btn" onclick="downloadPDF()" data-es="Descargar Contrato como PDF" data-sv="Ladda ner Kontrakt som PDF" data-en="Download Contract as PDF">Descargar Contrato como PDF</button>
     </div>
-
-    <h3>Terms & Conditions</h3>
-    <p><strong>Uso del vehículo:</strong> El vehículo no se utilizará con fines ilegales ni se conducirá bajo la influencia de drogas o alcohol.</p>
-    <p><strong>Límite de edad:</strong> El inquilino confirma que tiene al menos 23 años. Los inquilinos menores de 23 años no son elegibles para alquilar ni conducir el automóvil.</p>
-    <p><strong>Licencia de conducir:</strong> El inquilino debe tener una licencia de conducir válida y estar preparado para mostrarla en el momento del alquiler.</p>
-    <p><strong>Restricciones geográficas:</strong> El arrendatario acepta que el vehículo sólo puede circular dentro de un radio de 250 km desde Torrevieja, España. Si desea circular fuera de esta zona, deberá obtener autorización previa por escrito.</p>
-    <p><strong>Política de devolución:</strong> El vehículo debe devolverse en la fecha de finalización especificada en las mismas condiciones en que se recibió, excluyendo el desgaste normal. Las devoluciones tardías pueden estar sujetas a cargos adicionales.</p>
-    <p><strong>Responsabilidad por Daños:</strong> Si el vehículo es conducido por un conductor menor de 23 años, ese conductor será personalmente responsable de cualquier daño al vehículo de alquiler y de cualquier daño a terceros.</p>
-
-    <h3>Aceptación de Términos</h3>
-    <p>Al firmar a continuación, ambas partes reconocen y aceptan todos los términos y condiciones de este contrato.</p>
-    <p>Firma</p>
-    <canvas id="signaturePreview" style="border:1px solid #000; display:block; margin:10px 0; max-width:400px;"></canvas>
-    <p>___________________________</p>
-
-    <button class="blue-btn" onclick="openSignature()">✍️ Click here to sign</button>
-    <p id="signedStatus" style="color:green;display:none;">✔ Signature captured</p>
-
-    <label>Enter your email to receive the contract:</label>
-    <input type="email" id="clientEmail" placeholder="your@email.com">
-    <button class="blue-btn" onclick="sendEmail()">Send Contract via Email</button>
-    <button class="red-btn" onclick="downloadPDF()">Download Contract as PDF</button>
   </div>
 </div>
 
 <!-- Signature Modal -->
 <div id="signatureModal">
   <div class="modal-content">
-    <h3>Draw Your Signature</h3>
+    <h3 data-es="Dibuje Su Firma" data-sv="Rita Din Namnteckning" data-en="Draw Your Signature">Dibuje Su Firma</h3>
+    <p class="signature-instruction" data-es="Dibuje su firma en el recuadro inferior" data-sv="Rita din namnteckning i rutan nedan" data-en="Draw your signature in the box below">Dibuje su firma en el recuadro inferior</p>
     <canvas id="signatureCanvas"></canvas><br>
-    <button onclick="clearSignature()">Clear</button>
-    <button onclick="saveSignature()">Save</button>
-    <button onclick="closeSignature()">Cancel</button>
+    <button class="blue-btn" onclick="clearSignature()" data-es="Borrar" data-sv="Radera" data-en="Clear">Borrar</button>
+    <button class="blue-btn" onclick="saveSignature()" data-es="Guardar Firma" data-sv="Spara Namnteckning" data-en="Save Signature">Guardar Firma</button>
+    <button class="red-btn" onclick="closeSignature()" data-es="Cancelar" data-sv="Avbryt" data-en="Cancel">Cancelar</button>
   </div>
 </div>
 
@@ -143,32 +486,128 @@
 emailjs.init("Ct10aXWOv0UiEYTK42");
 
 let canvas, ctx, drawing = false, signatureData = null;
+let currentLanguage = 'es';
+
+function changeLanguage(lang) {
+  currentLanguage = lang;
+  
+  // Update all elements with data attributes
+  document.querySelectorAll('[data-es]').forEach(element => {
+    if (element.tagName === 'INPUT' && element.type !== 'button' && element.type !== 'submit') {
+      // Handle input placeholders
+      if (element.hasAttribute('placeholder')) {
+        const placeholderText = element.getAttribute(`data-${lang}`) || element.getAttribute('data-es');
+        element.setAttribute('placeholder', placeholderText);
+      }
+    } else {
+      // Handle text content for other elements
+      const text = element.getAttribute(`data-${lang}`) || element.getAttribute('data-es');
+      if (element.tagName === 'OPTION') {
+        element.textContent = text;
+      } else {
+        element.textContent = text;
+      }
+    }
+  });
+  
+  // Update language options visibility
+  document.querySelectorAll('.language-option').forEach(option => {
+    if (option.getAttribute('data-lang') === lang) {
+      option.classList.add('active');
+    } else {
+      option.classList.remove('active');
+    }
+  });
+  
+  // Update optional text spans
+  document.querySelectorAll('.optional').forEach(element => {
+    const text = element.getAttribute(`data-${lang}`) || element.getAttribute('data-es');
+    element.textContent = text;
+  });
+}
 
 function generateContract() {
   const clientName = document.getElementById('clientName').value || "";
   const phone = document.getElementById('phone').value || "";
+
+  // Solo se requiere nombre y teléfono
+  if (!clientName || !phone) {
+    alert(currentLanguage === 'es' ? "Por favor, proporcione al menos el nombre y el número de teléfono" : 
+          currentLanguage === 'sv' ? "Vänligen ange åtminstone namn och telefonnummer" :
+          "Please provide at least name and phone number");
+    return;
+  }
+
+  // Obtener otros valores (opcionales)
   const license = document.getElementById('license').value || "";
   const brand = document.getElementById('brand').value || "";
   const plate = document.getElementById('plate').value || "";
-  const units = document.getElementById('units').value || "";
+  const units = document.getElementById('units').value || "1"; // Default to 1
   const from = document.getElementById('from').value || "";
   const to = document.getElementById('to').value || "";
   const total = document.getElementById('total').value || "";
   const iva = document.getElementById('iva').value || "";
 
-  document.getElementById("showClientName").textContent = clientName;
-  document.getElementById("showPhone").textContent = phone;
-  document.getElementById("showLicense").textContent = license;
-  document.getElementById("showBrand").textContent = brand;
-  document.getElementById("showPlate").textContent = plate;
-  document.getElementById("showUnits").textContent = units;
-  document.getElementById("showFrom").textContent = from;
-  document.getElementById("showTo").textContent = to;
-  document.getElementById("showTotal").textContent = total ? parseFloat(total).toFixed(2) : "";
-  document.getElementById("showIVA").textContent = iva ? parseFloat(iva).toFixed(2) : "";
+  document.getElementById("showClientName").textContent = clientName || 
+    (currentLanguage === 'es' ? "No proporcionado" : 
+     currentLanguage === 'sv' ? "Inte angivet" : "Not provided");
+  
+  document.getElementById("showPhone").textContent = phone || 
+    (currentLanguage === 'es' ? "No proporcionado" : 
+     currentLanguage === 'sv' ? "Inte angivet" : "Not provided");
+  
+  document.getElementById("showLicense").textContent = license || 
+    (currentLanguage === 'es' ? "No proporcionado" : 
+     currentLanguage === 'sv' ? "Inte angivet" : "Not provided");
+  
+  document.getElementById("showBrand").textContent = brand || 
+    (currentLanguage === 'es' ? "No proporcionado" : 
+     currentLanguage === 'sv' ? "Inte angivet" : "Not provided");
+  
+  document.getElementById("showPlate").textContent = plate || 
+    (currentLanguage === 'es' ? "No proporcionado" : 
+     currentLanguage === 'sv' ? "Inte angivet" : "Not provided");
+  
+  document.getElementById("showUnits").textContent = units || "1";
+  
+  document.getElementById("showFrom").textContent = from || 
+    (currentLanguage === 'es' ? "No proporcionado" : 
+     currentLanguage === 'sv' ? "Inte angivet" : "Not provided");
+  
+  document.getElementById("showTo").textContent = to || 
+    (currentLanguage === 'es' ? "No proporcionado" : 
+     currentLanguage === 'sv' ? "Inte angivet" : "Not provided");
+  
+  document.getElementById("showTotal").textContent = total ? parseFloat(total).toFixed(2) : 
+    (currentLanguage === 'es' ? "No proporcionado" : 
+     currentLanguage === 'sv' ? "Inte angivet" : "Not provided");
+  
+  document.getElementById("showIVA").textContent = iva ? parseFloat(iva).toFixed(2) : 
+    (currentLanguage === 'es' ? "No proporcionado" : 
+     currentLanguage === 'sv' ? "Inte angivet" : "Not provided");
 
   document.getElementById("formSection").style.display = "none";
   document.getElementById("contractSection").style.display = "block";
+  
+  // Inicializar el canvas de vista previa de la firma
+  const preview = document.getElementById("signaturePreview");
+  preview.width = preview.offsetWidth;
+  preview.height = 120;
+  const pctx = preview.getContext("2d");
+  pctx.clearRect(0, 0, preview.width, preview.height);
+  pctx.strokeStyle = "#ccc";
+  pctx.lineWidth = 1;
+  pctx.setLineDash([5, 3]);
+  pctx.strokeRect(0, 0, preview.width, preview.height);
+  pctx.setLineDash([]);
+  pctx.font = "14px Arial";
+  pctx.fillStyle = "#999";
+  pctx.textAlign = "center";
+  
+  const placeholderText = currentLanguage === 'es' ? "La firma aparecerá aquí" :
+                         currentLanguage === 'sv' ? "Signaturen visas här" :
+                         "Signature will appear here";
+  pctx.fillText(placeholderText, preview.width/2, preview.height/2 + 5);
 }
 
 function openSignature() {
@@ -176,7 +615,9 @@ function openSignature() {
   setupCanvas();
 }
 
-function closeSignature() { document.getElementById("signatureModal").style.display = "none"; }
+function closeSignature() { 
+  document.getElementById("signatureModal").style.display = "none"; 
+}
 
 function setupCanvas() {
   canvas = document.getElementById("signatureCanvas");
@@ -185,96 +626,104 @@ function setupCanvas() {
   canvas.height = 200;
   ctx.strokeStyle = "#000";
   ctx.lineWidth = 2;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
 
   function getXY(e) {
     const rect = canvas.getBoundingClientRect();
-    if(e.touches && e.touches.length>0) return {x:e.touches[0].clientX-rect.left, y:e.touches[0].clientY-rect.top};
-    return {x:e.offsetX, y:e.offsetY};
+    if(e.touches && e.touches.length>0) return {
+      x: e.touches[0].clientX - rect.left, 
+      y: e.touches[0].clientY - rect.top
+    };
+    return {
+      x: e.offsetX || (e.clientX - rect.left), 
+      y: e.offsetY || (e.clientY - rect.top)
+    };
   }
 
-  function startDraw(e){drawing=true;const {x,y}=getXY(e);ctx.beginPath();ctx.moveTo(x,y);e.preventDefault();}
-  function draw(e){if(!drawing)return;const {x,y}=getXY(e);ctx.lineTo(x,y);ctx.stroke();e.preventDefault();}
-  function stopDraw(e){drawing=false;e.preventDefault();}
+  function startDraw(e){
+    drawing=true;
+    const {x,y}=getXY(e);
+    ctx.beginPath();
+    ctx.moveTo(x,y);
+    e.preventDefault();
+  }
+  
+  function draw(e){
+    if(!drawing) return;
+    const {x,y}=getXY(e);
+    ctx.lineTo(x,y);
+    ctx.stroke();
+    e.preventDefault();
+  }
+  
+  function stopDraw(e){
+    drawing=false;
+    e.preventDefault();
+  }
 
-  canvas.onmousedown=startDraw; canvas.onmousemove=draw; canvas.onmouseup=stopDraw; canvas.onmouseout=stopDraw;
-  canvas.ontouchstart=startDraw; canvas.ontouchmove=draw; canvas.ontouchend=stopDraw;
+  canvas.onmousedown = startDraw; 
+  canvas.onmousemove = draw; 
+  canvas.onmouseup = stopDraw; 
+  canvas.onmouseout = stopDraw;
+  canvas.ontouchstart = startDraw; 
+  canvas.ontouchmove = draw; 
+  canvas.ontouchend = stopDraw;
+  
+  // Borrar cualquier dibujo previo
+  clearSignature();
 }
 
-function clearSignature() { if(ctx){ ctx.clearRect(0,0,canvas.width,canvas.height); } }
+function clearSignature() { 
+  if(ctx){ 
+    ctx.clearRect(0, 0, canvas.width, canvas.height); 
+  } 
+}
 
 function saveSignature() {
+  // Comprobar si hay realmente una firma
+  const blank = document.createElement('canvas');
+  blank.width = canvas.width;
+  blank.height = canvas.height;
+  
+  if(canvas.toDataURL() === blank.toDataURL()) {
+    alert(currentLanguage === 'es' ? "Por favor, proporcione su firma primero" : 
+          currentLanguage === 'sv' ? "Vänligen ange din signatur först" :
+          "Please provide your signature first");
+    return;
+  }
+  
   signatureData = canvas.toDataURL();
   document.getElementById("signedStatus").style.display = "block";
 
   const preview = document.getElementById("signaturePreview");
   const pctx = preview.getContext("2d");
   preview.width = preview.offsetWidth;
-  preview.height = 100;
+  preview.height = 120;
   const img = new Image();
-  img.onload = () => { pctx.clearRect(0,0,preview.width,preview.height); pctx.drawImage(img,0,0,preview.width,preview.height); };
+  img.onload = () => { 
+    pctx.clearRect(0, 0, preview.width, preview.height); 
+    pctx.drawImage(img, 0, 0, preview.width, preview.height); 
+  };
   img.src = signatureData;
 
   closeSignature();
 }
 
-function getContractTextForPDF() {
-  const clientName = document.getElementById('showClientName').textContent || "";
-  const phone = document.getElementById('showPhone').textContent || "";
-  const license = document.getElementById('showLicense').textContent || "";
-  const brand = document.getElementById('showBrand').textContent || "";
-  const plate = document.getElementById('showPlate').textContent || "";
-  const units = document.getElementById('showUnits').textContent || "";
-  const from = document.getElementById('showFrom').textContent || "";
-  const to = document.getElementById('showTo').textContent || "";
-  const total = document.getElementById('showTotal').textContent || "";
-  const iva = document.getElementById('showIVA').textContent || "";
-
-  return `NIF/CIF: B72700586
-NOMBRE: SIMON ABBOUD
-NIE: Y-6074507-Z
-Dirección: Calle Antonio Ruiz Corces 31
-Teléfono office: +34642482422
-Simón: +46735043440
-
-CONTRATO DE ALQUILER DE COCHES
-
-[Columna 1]
-Cliente: ${clientName}
-Teléfono: ${phone}
-Licencia: ${license}
-Marca del coche: ${brand}
-Matrícula: ${plate}
-
-[Columna 2]
-Unidades: ${units}
-Fecha inicio: ${from}
-Fecha finalización: ${to}
-IVA: €${iva}
-Precio Total: €${total}
-
-Términos y condiciones:
-- Uso del vehículo: El vehículo no se utilizará con fines ilegales ni bajo drogas/alcohol.
-- Límite de edad: mínimo 23 años.
-- Licencia válida requerida.
-- Restricción geográfica: 250 km desde Torrevieja salvo autorización.
-- Devolución en fecha, en mismo estado.
-- Menores de 23: responsables de daños.
-
-Aceptación de términos:
-Al firmar a continuación, ambas partes reconocen y aceptan todos los términos y condiciones de este contrato.
-Firma
-___________________________
-`;
-}
-
 function downloadPDF() {
-  if(!signatureData) { alert("Please sign the contract first!"); return; }
+  if(!signatureData) { 
+    alert(currentLanguage === 'es' ? "¡Por favor, firme el contrato primero!" : 
+          currentLanguage === 'sv' ? "Vänligen signera kontraktet först!" :
+          "Please sign the contract first!"); 
+    return; 
+  }
+  
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
 
   doc.setFontSize(12);
 
-  // Header info
+  // Información del encabezado
   doc.text("NIF/CIF: B72700586", 10, 20);
   doc.text("NOMBRE: SIMON ABBOUD", 10, 27);
   doc.text("NIE: Y-6074507-Z", 10, 34);
@@ -284,7 +733,7 @@ function downloadPDF() {
 
   doc.text("CONTRATO DE ALQUILER DE COCHES", 10, 70);
 
-  // Two-column layout in PDF
+  // Diseño de dos columnas en PDF
   const leftX = 10, rightX = 110, yStart = 85, lineHeight = 7;
 
   doc.text(`Cliente: ${document.getElementById('showClientName').textContent}`, leftX, yStart);
@@ -296,14 +745,14 @@ function downloadPDF() {
   doc.text(`Unidades: ${document.getElementById('showUnits').textContent}`, rightX, yStart);
   doc.text(`Fecha inicio: ${document.getElementById('showFrom').textContent}`, rightX, yStart + lineHeight);
   doc.text(`Fecha finalización: ${document.getElementById('showTo').textContent}`, rightX, yStart + lineHeight*2);
-  doc.text(`IVA: €${document.getElementById('showIVA').textContent}`, rightX, yStart + lineHeight*3);
-  doc.text(`Precio Total: €${document.getElementById('showTotal').textContent}`, rightX, yStart + lineHeight*4);
+  doc.text(`IVA: ${document.getElementById('showIVA').textContent} €`, rightX, yStart + lineHeight*3);
+  doc.text(`Precio Total: ${document.getElementById('showTotal').textContent} €`, rightX, yStart + lineHeight*4);
 
-  // Terms & Conditions in PDF
+  // Términos y Condiciones en PDF
   let detailsEndY = Math.max(yStart + lineHeight*4, yStart + lineHeight*4);
   let termsTitleY = detailsEndY + 15;
   doc.setFont(undefined, "bold");
-  doc.text("Términos & Condiciones", 10, termsTitleY);
+  doc.text("Términos y Condiciones", 10, termsTitleY);
   doc.setFont(undefined, "normal");
 
   const terms = "Términos y condiciones:\n- Uso del vehículo: El vehículo no se utilizará con fines ilegales ni se conducirá bajo la influencia de drogas o alcohol.\n- Límite de edad: El inquilino confirma que tiene al menos 23 años. Los inquilinos menores de 23 años no son elegibles para alquilar ni conducir el automóvil.\n- Licencia de conducir: El inquilino debe tener una licencia de conducir válida y estar preparado para mostrarla en el momento del alquiler.\n- Restricciones geográficas: El arrendatario acepta que el vehículo sólo puede circular dentro de un radio de 250 km desde Torrevieja, España. Si desea circular fuera de esta zona, deberá obtener autorización previa por escrito.\n- Política de devolución: El vehículo debe devolverse en la fecha de finalización especificada en las mismas condiciones en que se recibió, excluyendo el desgaste normal. Las devoluciones tardías pueden estar sujetas a cargos adicionales.\n- Responsabilidad por Daños: Si el vehículo es conducido por un conductor menor de 23 años, ese conductor será personalmente responsable de cualquier daño al vehículo de alquiler y de cualquier daño a terceros.";
@@ -312,7 +761,7 @@ function downloadPDF() {
   const termsBodyY = termsTitleY + 8;
   doc.text(wrapped, 10, termsBodyY);
 
-  // Acceptance + signature
+  // Aceptación + firma
   const afterTermsY = termsBodyY + wrapped.length * 6 + 8;
   doc.setFont(undefined, "bold");
   doc.text("Aceptación de Términos", 10, afterTermsY);
@@ -321,33 +770,43 @@ function downloadPDF() {
   const acceptWrapped = doc.splitTextToSize(acceptText, 180);
   doc.text(acceptWrapped, 10, afterTermsY + 8);
 
-  // Signature lines
+  // Líneas de firma
   const sigLineY = afterTermsY + 8 + acceptWrapped.length * 6 + 30;
   doc.text("Firma del Cliente", 10, sigLineY - 20);
   doc.text("___________________________", 10, sigLineY);
   if (signatureData) {
     const sigWidth = 60;
-    const sigX = 10 + (70 - sigWidth) / 2; // Center the signature image on the 70-unit line
+    const sigX = 10 + (70 - sigWidth) / 2;
     doc.addImage(signatureData, 'PNG', sigX, sigLineY - 15, sigWidth, 15);
   }
-  doc.text("___________________________", 130, sigLineY); // Copied line to right side
-  // Company text shifted left, centered within a narrower range
+  doc.text("___________________________", 130, sigLineY);
+  
+  // Texto de la empresa
   doc.setFontSize(10);
-  doc.text("SICARS", 145, sigLineY - 25); // Moved left from 165 to 145
-  doc.text("RENT - SALE - BUY", 145, sigLineY - 20);
+  doc.text("SICARS", 145, sigLineY - 25);
+  doc.text("ALQUILER - VENTA - COMPRA", 145, sigLineY - 20);
   doc.text("C/ Antonio Ruiz Covés N° 31", 145, sigLineY - 15);
   doc.text("03183 Torrevieja", 145, sigLineY - 10);
   doc.text("Y 6074507Z", 145, sigLineY - 5);
   doc.text("Tel. +34 642 482 422", 145, sigLineY);
 
-  const clientName = document.getElementById('showClientName').textContent || "contract";
-  doc.save(`Contract_${clientName.replace(/\s+/g,'_')}.pdf`);
+  const clientName = document.getElementById('showClientName').textContent || "contrato";
+  doc.save(`Contrato_${clientName.replace(/\s+/g,'_')}.pdf`);
 }
 
 function sendEmail() {
   const clientEmail = document.getElementById("clientEmail").value;
   if (!clientEmail) {
-    alert("Please enter your email!");
+    alert(currentLanguage === 'es' ? "¡Por favor, ingrese su email!" : 
+          currentLanguage === 'sv' ? "Vänligen ange din e-postadress!" :
+          "Please enter your email!");
+    return;
+  }
+  
+  if (!signatureData) {
+    alert(currentLanguage === 'es' ? "¡Por favor, firme el contrato primero!" : 
+          currentLanguage === 'sv' ? "Vänligen signera kontraktet först!" :
+          "Please sign the contract first!");
     return;
   }
 
@@ -370,12 +829,21 @@ function sendEmail() {
     },
     'Ct6aXWOv0UiEYTK42'
   ).then(
-    function(response) { alert("Contract sent successfully!"); },
-    function(error) { alert("Failed to send contract. Try again."); console.error(error); }
+    function(response) { 
+      alert(currentLanguage === 'es' ? "¡Contrato enviado correctamente!" : 
+            currentLanguage === 'sv' ? "Kontrakt skickat!" :
+            "Contract sent successfully!"); 
+    },
+    function(error) { 
+      alert(currentLanguage === 'es' ? "Error al enviar el contrato. Inténtelo de nuevo." : 
+            currentLanguage === 'sv' ? "Fel vid sändning av kontrakt. Försök igen." :
+            "Failed to send contract. Try again."); 
+      console.error(error); 
+    }
   );
 }
 
-// Ensure functions exist on window for inline onclick handlers
+// Asegurar que las funciones existen en window para los manejadores onclick en línea
 window.generateContract = generateContract;
 window.openSignature = openSignature;
 window.closeSignature = closeSignature;
@@ -383,4 +851,7 @@ window.clearSignature = clearSignature;
 window.saveSignature = saveSignature;
 window.downloadPDF = downloadPDF;
 window.sendEmail = sendEmail;
+window.changeLanguage = changeLanguage;
 </script>
+</body>
+</html>
