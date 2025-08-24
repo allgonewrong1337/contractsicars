@@ -478,7 +478,7 @@
         <p><strong>Körkort:</strong> Kunden måste ha ett giltigt körkort och vara beredd att visa upp det vid uthyrningstillfället.</p>
         <p><strong>Geografiska begränsningar:</strong> Kunden accepterar att fordonet endast får köras inom en radie av 250 km från Torrevieja, Spanien. Om du vill köra utanför detta område måste du först få skriftligt tillstånd.</p>
         <p><strong>Återlämningspolicy:</strong> Fordonet måste återlämnas på det angivna slutdatumet i samma skick som det mottogs, exklusive normalt slitage. Sena återlämningar kan medföra extra avgifter.</p>
-        <p><strong>Ansvar för skador:</strong> Om fordonet körs van en förare under 23 år, är den föraren personligt ansvarig för eventuella skador på hyrbilen och eventuella skador på tredje part.</p>
+        <p><strong>Ansvar för skador:</strong> Om fordonet körs van en förare under 23 år, är den föraren personligen ansvarig för eventuella skador på hyrbilen och eventuella skador på tredje part.</p>
       </div>
 
       <div class="language-option" data-lang="en">
@@ -541,7 +541,7 @@
   </div>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umm.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
 <script>
 // Init EmailJS
@@ -549,6 +549,59 @@ emailjs.init("Ct10aXWOv0UiEYTK42");
 
 let canvas, ctx, drawing = false, signatureData = null;
 let currentLanguage = 'es';
+
+// Function to get URL parameters
+function getUrlParameter(name) {
+  name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+  const regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+  const results = regex.exec(location.search);
+  return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+}
+
+// Check if we're loading a contract from URL parameters
+function checkForContractInUrl() {
+  const clientName = getUrlParameter('client');
+  if (clientName) {
+    // We have a contract to display
+    document.getElementById('formSection').style.display = 'none';
+    document.getElementById('contractSection').style.display = 'block';
+    
+    // Fill in the contract details from URL parameters
+    document.getElementById('showClientName').textContent = clientName;
+    document.getElementById('showPhone').textContent = getUrlParameter('phone') || 'No proporcionado';
+    document.getElementById('showLicense').textContent = getUrlParameter('license') || 'No proporcionado';
+    document.getElementById('showBrand').textContent = getUrlParameter('brand') || 'No proporcionado';
+    document.getElementById('showPlate').textContent = getUrlParameter('plate') || 'No proporcionado';
+    document.getElementById('showUnits').textContent = getUrlParameter('units') || '1';
+    document.getElementById('showFrom').textContent = getUrlParameter('from') || 'No proporcionado';
+    document.getElementById('showTo').textContent = getUrlParameter('to') || 'No proporcionado';
+    document.getElementById('showIVA').textContent = getUrlParameter('iva') || 'No proporcionado';
+    document.getElementById('showTotal').textContent = getUrlParameter('total') || 'No proporcionado';
+    
+    // Initialize signature preview
+    const preview = document.getElementById("signaturePreview");
+    preview.width = preview.offsetWidth;
+    preview.height = 120;
+    const pctx = preview.getContext("2d");
+    pctx.clearRect(0, 0, preview.width, preview.height);
+    pctx.strokeStyle = "#ccc";
+    pctx.lineWidth = 1;
+    pctx.setLineDash([5, 3]);
+    pctx.strokeRect(0, 0, preview.width, preview.height);
+    pctx.setLineDash([]);
+    pctx.font = "14px Arial";
+    pctx.fillStyle = "#999";
+    pctx.textAlign = "center";
+    
+    const placeholderText = currentLanguage === 'es' ? "La firma aparecerá aquí" :
+                           currentLanguage === 'sv' ? "Signaturen visas här" :
+                           "Signature will appear here";
+    pctx.fillText(placeholderText, preview.width/2, preview.height/2 + 5);
+  }
+}
+
+// Call this function when the page loads
+window.onload = checkForContractInUrl;
 
 function changeLanguage(lang) {
   currentLanguage = lang;
@@ -610,66 +663,21 @@ function generateContract() {
   const total = document.getElementById('total').value || "";
   const iva = document.getElementById('iva').value || "";
 
-  document.getElementById("showClientName").textContent = clientName || 
-    (currentLanguage === 'es' ? "No proporcionado" : 
-     currentLanguage === 'sv' ? "Inte angivet" : "Not provided");
+  // Create URL with parameters
+  const params = new URLSearchParams();
+  params.set('client', clientName);
+  params.set('phone', phone);
+  if (license) params.set('license', license);
+  if (brand) params.set('brand', brand);
+  if (plate) params.set('plate', plate);
+  if (units) params.set('units', units);
+  if (from) params.set('from', from);
+  if (to) params.set('to', to);
+  if (total) params.set('total', total);
+  if (iva) params.set('iva', iva);
   
-  document.getElementById("showPhone").textContent = phone || 
-    (currentLanguage === 'es' ? "No proporcionado" : 
-     currentLanguage === 'sv' ? "Inte angivet" : "Not provided");
-  
-  document.getElementById("showLicense").textContent = license || 
-    (currentLanguage === 'es' ? "No proporcionado" : 
-     currentLanguage === 'sv' ? "Inte angivet" : "Not provided");
-  
-  document.getElementById("showBrand").textContent = brand || 
-    (currentLanguage === 'es' ? "No proporcionado" : 
-     currentLanguage === 'sv' ? "Inte angivet" : "Not provided");
-  
-  document.getElementById("showPlate").textContent = plate || 
-    (currentLanguage === 'es' ? "No proporcionado" : 
-     currentLanguage === 'sv' ? "Inte angivet" : "Not provided");
-  
-  document.getElementById("showUnits").textContent = units || "1";
-  
-  document.getElementById("showFrom").textContent = from || 
-    (currentLanguage === 'es' ? "No proporcionado" : 
-     currentLanguage === 'sv' ? "Inte angivet" : "Not provided");
-  
-  document.getElementById("showTo").textContent = to || 
-    (currentLanguage === 'es' ? "No proporcionado" : 
-     currentLanguage === 'sv' ? "Inte angivet" : "Not provided");
-  
-  document.getElementById("showTotal").textContent = total ? parseFloat(total).toFixed(2) : 
-    (currentLanguage === 'es' ? "No proporcionado" : 
-     currentLanguage === 'sv' ? "Inte angivet" : "Not provided");
-  
-  document.getElementById("showIVA").textContent = iva ? parseFloat(iva).toFixed(2) : 
-    (currentLanguage === 'es' ? "No proporcionado" : 
-     currentLanguage === 'sv' ? "Inte angivet" : "Not provided");
-
-  document.getElementById("formSection").style.display = "none";
-  document.getElementById("contractSection").style.display = "block";
-  
-  // Inicializar el canvas de vista previa de la firma
-  const preview = document.getElementById("signaturePreview");
-  preview.width = preview.offsetWidth;
-  preview.height = 120;
-  const pctx = preview.getContext("2d");
-  pctx.clearRect(0, 0, preview.width, preview.height);
-  pctx.strokeStyle = "#ccc";
-  pctx.lineWidth = 1;
-  pctx.setLineDash([5, 3]);
-  pctx.strokeRect(0, 0, preview.width, preview.height);
-  pctx.setLineDash([]);
-  pctx.font = "14px Arial";
-  pctx.fillStyle = "#999";
-  pctx.textAlign = "center";
-  
-  const placeholderText = currentLanguage === 'es' ? "La firma aparecerá aquí" :
-                         currentLanguage === 'sv' ? "Signaturen visas här" :
-                         "Signature will appear here";
-  pctx.fillText(placeholderText, preview.width/2, preview.height/2 + 5);
+  // Navigate to the contract page with parameters
+  window.location.href = `https://contract.sicars.net/?${params.toString()}`;
 }
 
 function openSignature() {
