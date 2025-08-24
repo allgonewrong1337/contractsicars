@@ -17,10 +17,7 @@
   .blue-btn:hover { background: #0056b3; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
   .red-btn { background: #FF4136; color: #fff; margin-top: 20px; }
   .red-btn:hover { background: #c12b1f; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
-  .green-btn { background: #28a745; color: #fff; padding: 8px 15px; font-size: 14px; margin: 5px; }
-  .green-btn:hover { background: #218838; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
-  .purple-btn { background: #6f42c1; color: #fff; padding: 8px 15px; font-size: 14px; margin: 5px; }
-  .purple-btn:hover { background: #5a36a9; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+
   .contract { border: 1px solid #ccc; padding: 25px; margin-top: 25px; font-size: 15px; border-radius: 8px; background: #fff; }
   .contract p { margin: 10px 0; }
   #signatureModal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); justify-content: center; align-items: center; }
@@ -28,11 +25,45 @@
   #signatureCanvas { border: 2px solid #007BFF; width: 100%; height: 200px; touch-action: none; border-radius: 5px; background: #f9f9f9; }
   .two-columns { display: flex; justify-content: flex-start; margin-top: 20px; gap: 40px; flex-wrap: wrap; }
   .col { width: 100%; max-width: 400px; }
+
+  /* Signature block */
   .signature-container { margin: 25px 0; padding: 20px; border: 2px dashed #007BFF; border-radius: 8px; text-align: center; background: #f0f8ff; }
   .signature-preview-container { position: relative; margin: 20px 0; min-height: 120px; display: flex; justify-content: center; }
   #signaturePreview { border: 1px solid #aaa; display: block; margin: 0 auto; max-width: 100%; background-color: white; border-radius: 5px; width: 350px; height: 120px; }
   .signature-btn { padding: 16px 30px; font-size: 18px; margin: 15px auto; display: block; width: 100%; max-width: 350px; }
   .signature-instruction { color: #666; font-style: italic; margin-top: 10px; }
+
+  /* Language flag buttons */
+  .translation-buttons { display: flex; flex-wrap: wrap; gap: 10px; margin: 15px 0 5px; }
+  .flag-btn {
+    background: none;
+    border: 2px solid transparent;
+    border-radius: 8px;
+    font-size: 34px;
+    line-height: 1;
+    padding: 6px 10px;
+    cursor: pointer;
+    transition: transform .2s, box-shadow .2s, border-color .2s, background-color .2s;
+    position: relative;
+  }
+  .flag-btn:hover {
+    transform: translateY(-3px) scale(1.07);
+    box-shadow: 0 6px 14px rgba(0,0,0,0.18);
+  }
+  .flag-btn.active {
+    border-color: #007BFF;
+    box-shadow: 0 0 0 4px rgba(0,123,255,0.25);
+    background-color: #e7f2ff;
+  }
+  .flag-btn:focus-visible {
+    outline: 3px solid #80bdff;
+    outline-offset: 2px;
+  }
+
+  @media (max-width: 480px) {
+    .flag-btn { font-size: 30px; padding: 4px 8px; }
+  }
+
   @media (max-width: 768px) {
     body { margin: 10px; }
     .container { padding: 15px; }
@@ -43,19 +74,19 @@
     #signaturePreview { width: 100%; height: 100px; }
   }
   @media (max-width: 480px) {
-    button { width: 100%; }
+    button:not(.flag-btn) { width: 100%; }
     .modal-content { padding: 15px; width: 95%; }
     .signature-btn { padding: 14px 20px; font-size: 16px; }
   }
+
   input:focus, select:focus { outline: none; border-color: #007BFF; box-shadow: 0 0 0 3px rgba(0,123,255,0.25); }
   .modal-content button { margin: 10px 5px; padding: 10px 15px; display: inline-block; width: auto; }
   .success-message { color: #28a745; font-weight: 600; text-align: center; margin-top: 10px; }
   .optional { color: #6c757d; font-weight: normal; font-size: 0.9em; }
   .required-field::after { content: " *"; color: #FF4136; }
-  .translation-section { margin-top: 20px; padding: 15px; background-color: #f8f9fa; border-radius: 5px; border-left: 4px solid #28a745; }
-  .translation-buttons { display: flex; flex-wrap: wrap; margin: 10px 0; }
   .language-option { display: none; }
   .language-option.active { display: block; }
+
   .loading-spinner { display: none; border: 4px solid #f3f3f3; border-top: 4px solid #007BFF; border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; margin: 10px auto; }
   @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
   .email-status { text-align: center; padding: 10px; margin: 10px 0; border-radius: 5px; display: none; }
@@ -110,6 +141,7 @@
   <div id="contractSection" style="display:none;">
     <h2 data-es="Sicars Contrato de Alquiler de Coches" data-sv="Sicars Biluthyrningsavtal" data-en="Sicars Car Rental Contract">Sicars Contrato de Alquiler de Coches</h2>
     <div class="contract" id="contractContent">
+
       <p><strong data-es="NIF/CIF:" data-sv="NIF/CIF:" data-en="NIF/CIF:">NIF/CIF:</strong> B72700586</p>
       <p><strong data-es="NOMBRE:" data-sv="NAMN:" data-en="NAME:">NOMBRE:</strong> SIMON ABBOUD</p>
       <p><strong data-es="NIE:" data-sv="NIE:" data-en="NIE:">NIE:</strong> Y-6074507-Z</p>
@@ -137,10 +169,11 @@
         </div>
       </div>
 
+      <!-- FLAG STYLE LANGUAGE SWITCH -->
       <div class="translation-buttons">
-        <button class="green-btn" onclick="changeLanguage('es')">🇪🇸</button>
-        <button class="green-btn" onclick="changeLanguage('sv')">🇸🇪</button>
-        <button class="purple-btn" onclick="changeLanguage('en')">🇬🇧</button>
+        <button class="flag-btn active" data-lang-btn="es" onclick="changeLanguage('es')" aria-label="Español">🇪🇸</button>
+        <button class="flag-btn" data-lang-btn="sv" onclick="changeLanguage('sv')" aria-label="Svenska">🇸🇪</button>
+        <button class="flag-btn" data-lang-btn="en" onclick="changeLanguage('en')" aria-label="English">🇬🇧</button>
       </div>
 
       <h3 data-es="Términos y Condiciones" data-sv="Villkor" data-en="Terms & Conditions">Términos y Condiciones</h3>
@@ -206,11 +239,12 @@
       
       <button class="blue-btn" onclick="sendEmail()" data-es="Enviar Contrato por Email" data-sv="Skicka Kontrakt via E-post" data-en="Send Contract via Email">Enviar Contrato por Email</button>
       <button class="red-btn" onclick="downloadPDF()" data-es="Descargar Contrato como PDF" data-sv="Ladda ner Kontrakt som PDF" data-en="Download Contract as PDF">Descargar Contrato como PDF</button>
-      <button class="green-btn" style="margin-top:25px;" onclick="goBackToForm()" data-es="Volver al Formulario" data-sv="Tillbaka till Formulär" data-en="Back to Form">Volver al Formulario</button>
+      <button class="blue-btn" style="margin-top:25px; background:#17a2b8" onclick="goBackToForm()" data-es="Volver al Formulario" data-sv="Tillbaka till Formulär" data-en="Back to Form">Volver al Formulario</button>
     </div>
   </div>
 </div>
 
+<!-- Signature Modal -->
 <div id="signatureModal">
   <div class="modal-content">
     <h3 data-es="Dibuje Su Firma" data-sv="Rita Din Namnteckning" data-en="Draw Your Signature">Dibuje Su Firma</h3>
@@ -230,27 +264,16 @@ emailjs.init("Ct10aXWOv0UiEYTK42");
 let canvas, ctx, drawing = false, signatureData = null;
 let currentLanguage = 'es';
 
-/* =============== URL / ROUTING ADDITIONS ===============
-   We add a query parameter ?contract=slug when contract is generated.
-   If you prefer hash, replace updateUrl() logic with:
-     const newUrl = window.location.pathname + '#contract';
-   ------------------------------------------------------ */
+/* URL / routing additions from previous version */
 function buildContractSlug(name) {
-  return (name || 'contrato')
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9]+/g,'-')
-    .replace(/^-+|-+$/g,'');
+  return (name || 'contrato').toLowerCase().trim().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');
 }
-
 function updateUrl(clientName) {
   const slug = buildContractSlug(clientName);
   const params = new URLSearchParams(window.location.search);
   params.set('contract', slug);
-  // Push new state (so Back works)
   history.pushState({ contract: true, slug }, '', window.location.pathname + '?' + params.toString());
 }
-
 function clearContractUrl() {
   const params = new URLSearchParams(window.location.search);
   if (params.has('contract')) {
@@ -258,20 +281,16 @@ function clearContractUrl() {
     history.pushState({ contract: false }, '', window.location.pathname + (params.toString() ? '?' + params.toString() : ''));
   }
 }
-
 function goBackToForm() {
-  signatureData = null; // optional: forget signature when going back
+  signatureData = null;
   document.getElementById("contractSection").style.display = "none";
   document.getElementById("formSection").style.display = "block";
   clearContractUrl();
-  // Optionally reset the form: document.getElementById("formSection").querySelector('form')...
 }
 
-/* Handle Back/Forward navigation */
 window.addEventListener('popstate', function() {
   const params = new URLSearchParams(window.location.search);
   if (params.has('contract')) {
-    // Show contract section (NOTE: Without persisted data, may show placeholders)
     document.getElementById("formSection").style.display = "none";
     document.getElementById("contractSection").style.display = "block";
   } else {
@@ -280,20 +299,25 @@ window.addEventListener('popstate', function() {
   }
 });
 
-/* On initial load, if ?contract= is present, show contract view.
-   Since the data isn't persisted, you could extend this by saving
-   form data to localStorage before switching. */
 document.addEventListener('DOMContentLoaded', () => {
   const params = new URLSearchParams(window.location.search);
   if (params.has('contract')) {
-    // Attempt to show existing contract view (will be blank unless you persist data)
     document.getElementById("formSection").style.display = "none";
     document.getElementById("contractSection").style.display = "block";
   }
+  // Ensure initial active flag styling
+  updateActiveFlag(currentLanguage);
 });
+
+function updateActiveFlag(lang) {
+  document.querySelectorAll('[data-lang-btn]').forEach(btn => {
+    btn.classList.toggle('active', btn.getAttribute('data-lang-btn') === lang);
+  });
+}
 
 function changeLanguage(lang) {
   currentLanguage = lang;
+  updateActiveFlag(lang);
   document.querySelectorAll('[data-es]').forEach(element => {
     if (element.tagName === 'INPUT' && element.type !== 'button' && element.type !== 'submit') {
       if (element.hasAttribute('placeholder')) {
@@ -306,8 +330,7 @@ function changeLanguage(lang) {
     }
   });
   document.querySelectorAll('.language-option').forEach(option => {
-    if (option.getAttribute('data-lang') === lang) option.classList.add('active');
-    else option.classList.remove('active');
+    option.classList.toggle('active', option.getAttribute('data-lang') === lang);
   });
   document.querySelectorAll('.optional').forEach(element => {
     const text = element.getAttribute(`data-${lang}`) || element.getAttribute('data-es');
@@ -349,10 +372,7 @@ function generateContract() {
   document.getElementById("formSection").style.display = "none";
   document.getElementById("contractSection").style.display = "block";
   initSignaturePreview();
-  // Update URL
   updateUrl(clientName);
-  // OPTIONAL: Persist form data for reload/back (uncomment to use)
-  // localStorage.setItem('contractData', JSON.stringify({clientName, phone, license, brand, plate, units, from, to, total, iva}));
 }
 
 function initSignaturePreview() {
