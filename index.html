@@ -119,6 +119,32 @@
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
   }
+
+  /* New style for flag buttons */
+  .flag-btn {
+    font-size: 2.5em;
+    padding: 5px 10px;
+    background: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin: 0 5px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .flag-btn:hover {
+    background: #e0e0e0;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  }
+
+  /* Keep the translation buttons aligned */
+  .translation-buttons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 10px 0;
+  }
   
   .contract { 
     border: 1px solid #ccc; 
@@ -316,12 +342,6 @@
     border-left: 4px solid #28a745;
   }
 
-  .translation-buttons {
-    display: flex;
-    flex-wrap: wrap;
-    margin: 10px 0;
-  }
-
   .language-option {
     display: none;
   }
@@ -456,9 +476,9 @@
       </div>
 
       <div class="translation-buttons">
-        <button class="green-btn" onclick="changeLanguage('es')">Español</button>
-        <button class="green-btn" onclick="changeLanguage('sv')">Svenska</button>
-        <button class="purple-btn" onclick="changeLanguage('en')">English</button>
+        <button class="flag-btn" onclick="changeLanguage('es')">🇪🇸</button>
+        <button class="flag-btn" onclick="changeLanguage('sv')">🇸🇪</button>
+        <button class="flag-btn" onclick="changeLanguage('en')">🇬🇧</button>
       </div>
 
       <h3 data-es="Términos y Condiciones" data-sv="Villkor" data-en="Terms & Conditions">Términos y Condiciones</h3>
@@ -474,9 +494,9 @@
 
       <div class="language-option" data-lang="sv">
         <p><strong>Användning av fordonet:</strong> Fordonet får inte användas för olagliga ändamål eller köras under påverkan av droger eller alkohol.</p>
-        <p><strong>Åldersgräns:</strong> Kunden bekräftar att han/hon är minst 23 år gammal. Kunder under 23 år är inte berättigade att hyra eller köra bilen.</p>
+        <p><strong>Åldersgräns:</strong> Kunden bekräftar att han/hon es minst 23 år gammal. Kunder under 23 år är inte berättigade att hyra eller köra bilen.</p>
         <p><strong>Körkort:</strong> Kunden måste ha ett giltigt körkort och vara beredd att visa upp det vid uthyrningstillfället.</p>
-        <p><strong>Geografiska begränsningar:</strong> Kunden accepterar att fordonet endast får köras inom en radie av 250 km från Torrevieja, Spanien. Om du vill köra utanför detta område måste du först få skriftligt tillstånd.</p>
+        <p><strong>Geografiska begränsningar:</strong> Kunden accepterar att fordonet endast får köras dentro de un radio de 250 km från Torrevieja, Spanien. Om du vill köra utanför detta område måste du först få skriftligt tillstånd.</p>
         <p><strong>Återlämningspolicy:</strong> Fordonet måste återlämnas på det angivna slutdatumet i samma skick som det mottogs, exklusive normalt slitage. Sena återlämningar kan medföra extra avgifter.</p>
         <p><strong>Ansvar för skador:</strong> Om fordonet körs van en förare under 23 år, är den föraren personligen ansvarig för eventuella skador på hyrbilen och eventuella skador på tredje part.</p>
       </div>
@@ -506,7 +526,6 @@
       <label data-es="Ingrese su email para recibir el contrato:" data-sv="Ange din e-post för att få kontraktet:" data-en="Enter your email to receive the contract:">Ingrese su email para recibir el contrato:</label>
       <input type="email" id="clientEmail" placeholder="su@email.com">
       
-      <!-- Email sending status area -->
       <div class="loading-spinner" id="emailLoading"></div>
       <div class="email-status" id="emailSuccess">
         <p data-es="✔ Contrato enviado correctamente. Por favor, revise su carpeta de correo no deseado si no puede encontrarlo en su bandeja de entrada." 
@@ -529,7 +548,6 @@
   </div>
 </div>
 
-<!-- Signature Modal -->
 <div id="signatureModal">
   <div class="modal-content">
     <h3 data-es="Dibuje Su Firma" data-sv="Rita Din Namnteckning" data-en="Draw Your Signature">Dibuje Su Firma</h3>
@@ -790,154 +808,69 @@ function downloadPDF() {
   
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
+  const content = document.getElementById('contractContent');
 
-  doc.setFontSize(12);
-
-  // Información del encabezado
-  doc.text("NIF/CIF: B72700586", 10, 20);
-  doc.text("NOMBRE: SIMON ABBOUD", 10, 27);
-  doc.text("NIE: Y-6074507-Z", 10, 34);
-  doc.text("Dirección: Calle Antonio Ruiz Corces 31", 10, 41);
-  doc.text("Teléfono office: +34642482422", 10, 48);
-  doc.text("Simón: +46735043440", 10, 55);
-
-  doc.text("CONTRATO DE ALQUILER DE COCHES", 10, 70);
-
-  // Diseño de dos columnas en PDF
-  const leftX = 10, rightX = 110, yStart = 85, lineHeight = 7;
-
-  doc.text(`Cliente: ${document.getElementById('showClientName').textContent}`, leftX, yStart);
-  doc.text(`Teléfono: ${document.getElementById('showPhone').textContent}`, leftX, yStart + lineHeight);
-  doc.text(`Licencia: ${document.getElementById('showLicense').textContent}`, leftX, yStart + lineHeight*2);
-  doc.text(`Marca del coche: ${document.getElementById('showBrand').textContent}`, leftX, yStart + lineHeight*3);
-  doc.text(`Matrícula: ${document.getElementById('showPlate').textContent}`, leftX, yStart + lineHeight*4);
-
-  doc.text(`Unidades: ${document.getElementById('showUnits').textContent}`, rightX, yStart);
-  doc.text(`Fecha inicio: ${document.getElementById('showFrom').textContent}`, rightX, yStart + lineHeight);
-  doc.text(`Fecha finalización: ${document.getElementById('showTo').textContent}`, rightX, yStart + lineHeight*2);
-  doc.text(`IVA: ${document.getElementById('showIVA').textContent} €`, rightX, yStart + lineHeight*3);
-  doc.text(`Precio Total: ${document.getElementById('showTotal').textContent} €`, rightX, yStart + lineHeight*4);
-
-  // Términos y Condiciones en PDF
-  let detailsEndY = Math.max(yStart + lineHeight*4, yStart + lineHeight*4);
-  let termsTitleY = detailsEndY + 15;
-  doc.setFont(undefined, "bold");
-  doc.text("Términos y Condiciones", 10, termsTitleY);
-  doc.setFont(undefined, "normal");
-
-  const terms = "Términos y condiciones:\n- Uso del vehículo: El vehículo no se utilizará con fines ilegales ni se conducirá bajo la influencia de drogas o alcohol.\n- Límite de edad: El inquilino confirma que tiene al menos 23 años. Los inquilinos menores de 23 años no son elegibles para alquilar ni conducir el automóvil.\n- Licencia de conducir: El inquilino debe tener una licencia de conducir válida y estar preparado para mostrarla en el momento del alquiler.\n- Restricciones geográficas: El arrendatario acepta que el vehículo sólo puede circular dentro de un radio de 250 km desde Torrevieja, España. Si desea circular fuera de esta zona, deberá obtener autorización previa por escrito.\n- Política de devolución: El vehículo debe devolverse en la fecha de finalización especificada en las mismas condiciones en que se recibió, excluyendo el desgaste normal. Las devoluciones tardías pueden estar sujetas a cargos adicionales.\n- Responsabilidad por Daños: Si el vehículo es conducido por un conductor menor de 23 años, ese conductor será personalmente responsable de cualquier daño al vehículo de alquiler y de cualquier daño a terceros.";
-
-  const wrapped = doc.splitTextToSize(terms, 180);
-  const termsBodyY = termsTitleY + 8;
-  doc.text(wrapped, 10, termsBodyY);
-
-  // Aceptación + firma
-  const afterTermsY = termsBodyY + wrapped.length * 6 + 8;
-  doc.setFont(undefined, "bold");
-  doc.text("Aceptación de Términos", 10, afterTermsY);
-  doc.setFont(undefined, "normal");
-  const acceptText = "Al firmar a continuación, ambas partes reconocen y aceptan todos los términos y condiciones de este contrato.";
-  const acceptWrapped = doc.splitTextToSize(acceptText, 180);
-  doc.text(acceptWrapped, 10, afterTermsY + 8);
-
-  // Líneas de firma
-  const sigLineY = afterTermsY + 8 + acceptWrapped.length * 6 + 30;
-  doc.text("Firma del Cliente", 10, sigLineY - 20);
-  doc.text("___________________________", 10, sigLineY);
-  if (signatureData) {
-    const sigWidth = 60;
-    const sigX = 10 + (70 - sigWidth) / 2;
-    doc.addImage(signatureData, 'PNG', sigX, sigLineY - 15, sigWidth, 15);
-  }
-  doc.text("___________________________", 130, sigLineY);
-  
-  // Texto de la empresa
-  doc.setFontSize(10);
-  doc.text("SICARS", 145, sigLineY - 25);
-  doc.text("ALQUILER - VENTA - COMPRA", 145, sigLineY - 20);
-  doc.text("C/ Antonio Ruiz Covés N° 31", 145, sigLineY - 15);
-  doc.text("03183 Torrevieja", 145, sigLineY - 10);
-  doc.text("Y 6074507Z", 145, sigLineY - 5);
-  doc.text("Tel. +34 642 482 422", 145, sigLineY);
-
-  const clientName = document.getElementById('showClientName').textContent || "contrato";
-  doc.save(`Contrato_${clientName.replace(/\s+/g,'_')}.pdf`);
+  doc.html(content, {
+    callback: function (doc) {
+      const clientName = document.getElementById('showClientName').textContent;
+      doc.save(`Contrato_${clientName}.pdf`);
+    },
+    x: 15,
+    y: 15,
+    width: 180, // Target width in PDF
+    windowWidth: 650 // Window width to render the HTML
+  });
 }
 
 function sendEmail() {
-  const clientEmail = document.getElementById("clientEmail").value;
+  const clientEmail = document.getElementById('clientEmail').value;
   if (!clientEmail) {
-    alert(currentLanguage === 'es' ? "¡Por favor, ingrese su email!" : 
-          currentLanguage === 'sv' ? "Vänligen ange din e-postadress!" :
-          "Please enter your email!");
+    alert(currentLanguage === 'es' ? "Por favor, ingrese un email válido." : 
+          currentLanguage === 'sv' ? "Vänligen ange en giltig e-postadress." :
+          "Please enter a valid email address.");
     return;
   }
-  
+
   if (!signatureData) {
-    alert(currentLanguage === 'es' ? "¡Por favor, firme el contrato primero!" : 
-          currentLanguage === 'sv' ? "Vänligen signera kontraktet först!" :
-          "Please sign the contract first!");
+    alert(currentLanguage === 'es' ? "¡Por favor, firme el contrato primero antes de enviarlo!" : 
+          currentLanguage === 'sv' ? "Vänligen signera kontraktet först innan du skickar det!" :
+          "Please sign the contract first before sending it!");
     return;
   }
 
-  // Show loading spinner and hide any previous messages
-  document.getElementById('emailLoading').style.display = 'block';
-  document.getElementById('emailSuccess').style.display = 'none';
-  document.getElementById('emailError').style.display = 'none';
+  const emailStatus = document.getElementById('emailStatus');
+  const loading = document.getElementById('emailLoading');
+  const successMessage = document.getElementById('emailSuccess');
+  const errorMessage = document.getElementById('emailError');
+  
+  // Hide previous messages and show loading spinner
+  successMessage.style.display = 'none';
+  errorMessage.style.display = 'none';
+  loading.style.display = 'block';
 
-  emailjs.send(
-    'service_a709mgr',
-    'template_2ifazx8',
-    {
-      client_name: document.getElementById('showClientName').textContent,
-      phone: document.getElementById('showPhone').textContent,
-      license: document.getElementById('showLicense').textContent,
-      brand: document.getElementById('showBrand').textContent,
-      plate: document.getElementById('showPlate').textContent,
-      units: document.getElementById('showUnits').textContent,
-      from_date: document.getElementById('showFrom').textContent,
-      to_date: document.getElementById('showTo').textContent,
-      total_cost: document.getElementById('showTotal').textContent,
-      iva: document.getElementById('showIVA').textContent,
-      signature: signatureData,
-      to_email: clientEmail
-    },
-    'Ct6aXWOv0UiEYTK42'
-  ).then(
-    function(response) { 
-      // Hide loading spinner
-      document.getElementById('emailLoading').style.display = 'none';
-      
-      // Show success message
-      document.getElementById('emailSuccess').style.display = 'block';
-      
-      // Update success message based on language
-      changeLanguage(currentLanguage);
-    },
-    function(error) { 
-      // Hide loading spinner
-      document.getElementById('emailLoading').style.display = 'none';
-      
-      // Show error message
-      document.getElementById('emailError').style.display = 'block';
-      
-      // Update error message based on language
-      changeLanguage(currentLanguage);
-      
-      console.error(error); 
-    }
-  );
+  // Get contract content as HTML
+  const contractContent = document.getElementById('contractContent').innerHTML;
+  
+  const templateParams = {
+    to_email: clientEmail,
+    from_name: 'Sicars',
+    subject: `Contrato de Alquiler de Coche - ${document.getElementById('showClientName').textContent}`,
+    message: contractContent,
+    signature_img: signatureData
+  };
+
+  emailjs.send('default_service', 'template_your_template_id', templateParams)
+    .then(function(response) {
+      loading.style.display = 'none';
+      successMessage.style.display = 'block';
+      console.log('SUCCESS!', response.status, response.text);
+    }, function(error) {
+      loading.style.display = 'none';
+      errorMessage.style.display = 'block';
+      console.log('FAILED...', error);
+    });
 }
-
-// Asegurar que las funciones existen en window para los manejadores onclick en línea
-window.generateContract = generateContract;
-window.openSignature = openSignature;
-window.closeSignature = closeSignature;
-window.clearSignature = clearSignature;
-window.saveSignature = saveSignature;
-window.downloadPDF = downloadPDF;
-window.sendEmail = sendEmail;
-window.changeLanguage = changeLanguage;
 </script>
+
 </body>
 </html>
