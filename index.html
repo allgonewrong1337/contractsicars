@@ -5,374 +5,63 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Sicars Contrato de Alquiler de Coches</title>
 <style>
-  * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-  }
-  
-  body { 
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-    margin: 20px; 
-    line-height: 1.6; 
-    background-color: #f8f9fa;
-    color: #333;
-  }
-  
-  .container {
-    max-width: 1000px;
-    margin: 0 auto;
-    background: white;
-    padding: 25px;
-    border-radius: 10px;
-    box-shadow: 0 0 20px rgba(0,0,0,0.1);
-  }
-  
-  h2 {
-    color: #007BFF;
-    margin-bottom: 20px;
-    text-align: center;
-    border-bottom: 2px solid #007BFF;
-    padding-bottom: 10px;
-  }
-  
-  h3 {
-    color: #0056b3;
-    margin: 20px 0 15px;
-    padding-bottom: 5px;
-    border-bottom: 1px solid #ddd;
-  }
-  
-  label { 
-    display: block; 
-    margin: 15px 0 8px; 
-    font-weight: 600;
-  }
-  
-  input, select { 
-    padding: 12px; 
-    width: 100%; 
-    max-width: 400px; 
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    font-size: 16px;
-  }
-  
-  button { 
-    margin-top: 15px; 
-    padding: 14px 20px; 
-    cursor: pointer; 
-    border: none; 
-    border-radius: 5px; 
-    font-size: 16px;
-    font-weight: 600;
-    transition: all 0.3s ease;
-  }
-  
-  .blue-btn { 
-    background: #007BFF; 
-    color: #fff; 
-  }
-  
-  .blue-btn:hover { 
-    background: #0056b3; 
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  }
-  
-  .red-btn { 
-    background: #FF4136; 
-    color: #fff; 
-    margin-top: 20px; 
-  }
-  
-  .red-btn:hover { 
-    background: #c12b1f; 
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  }
-
-  .green-btn { 
-    background: #28a745; 
-    color: #fff; 
-    padding: 8px 15px;
-    font-size: 14px;
-    margin: 5px;
-  }
-  
-  .green-btn:hover { 
-    background: #218838; 
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  }
-
-  .purple-btn { 
-    background: #6f42c1; 
-    color: #fff; 
-    padding: 8px 15px;
-    font-size: 14px;
-    margin: 5px;
-  }
-  
-  .purple-btn:hover { 
-    background: #5a36a9; 
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  }
-  
-  .contract { 
-    border: 1px solid #ccc; 
-    padding: 25px; 
-    margin-top: 25px; 
-    font-size: 15px; 
-    border-radius: 8px;
-    background: #fff;
-  }
-  
-  .contract p { 
-    margin: 10px 0; 
-  }
-  
-  #signatureModal { 
-    display: none; 
-    position: fixed; 
-    z-index: 1000; 
-    left: 0; 
-    top: 0; 
-    width: 100%; 
-    height: 100%; 
-    background: rgba(0,0,0,0.7); 
-    justify-content: center; 
-    align-items: center; 
-  }
-  
-  .modal-content { 
-    background: #fff; 
-    padding: 25px; 
-    border-radius: 10px; 
-    text-align: center; 
-    max-width: 500px; 
-    width: 95%;
-    box-shadow: 0 5px 25px rgba(0,0,0,0.3);
-  }
-  
-  #signatureCanvas { 
-    border: 2px solid #007BFF; 
-    width: 100%; 
-    height: 200px; 
-    touch-action: none; 
-    border-radius: 5px;
-    background: #f9f9f9;
-  }
-  
-  /* Two-column layout */
-  .two-columns { 
-    display: flex; 
-    justify-content: flex-start; 
-    margin-top: 20px; 
-    gap: 40px;
-    flex-wrap: wrap;
-  }
-  
-  .col { 
-    width: 100%;
-    max-width: 400px;
-  }
-  
-  /* New styles for signature section */
-  .signature-container { 
-    margin: 25px 0; 
-    padding: 20px; 
-    border: 2px dashed #007BFF; 
-    border-radius: 8px; 
-    text-align: center; 
-    background: #f0f8ff;
-  }
-  
-  .signature-preview-container {
-    position: relative;
-    margin: 20px 0;
-    min-height: 120px;
-    display: flex;
-    justify-content: center;
-  }
-  
-  #signaturePreview { 
-    border: 1px solid #aaa; 
-    display: block; 
-    margin: 0 auto; 
-    max-width: 100%; 
-    background-color: white;
-    border-radius: 5px;
-    width: 350px;
-    height: 120px;
-  }
-  
-  .signature-btn { 
-    padding: 16px 30px; 
-    font-size: 18px; 
-    margin: 15px auto; 
-    display: block; 
-    width: 100%;
-    max-width: 350px;
-  }
-  
-  .signature-instruction {
-    color: #666;
-    font-style: italic;
-    margin-top: 10px;
-  }
-  
-  /* Responsive adjustments */
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 20px; line-height: 1.6; background-color: #f8f9fa; color: #333; }
+  .container { max-width: 1000px; margin: 0 auto; background: white; padding: 25px; border-radius: 10px; box-shadow: 0 0 20px rgba(0,0,0,0.1); }
+  h2 { color: #007BFF; margin-bottom: 20px; text-align: center; border-bottom: 2px solid #007BFF; padding-bottom: 10px; }
+  h3 { color: #0056b3; margin: 20px 0 15px; padding-bottom: 5px; border-bottom: 1px solid #ddd; }
+  label { display: block; margin: 15px 0 8px; font-weight: 600; }
+  input, select { padding: 12px; width: 100%; max-width: 400px; border: 1px solid #ddd; border-radius: 5px; font-size: 16px; }
+  button { margin-top: 15px; padding: 14px 20px; cursor: pointer; border: none; border-radius: 5px; font-size: 16px; font-weight: 600; transition: all 0.3s ease; }
+  .blue-btn { background: #007BFF; color: #fff; }
+  .blue-btn:hover { background: #0056b3; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+  .red-btn { background: #FF4136; color: #fff; margin-top: 20px; }
+  .red-btn:hover { background: #c12b1f; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+  .green-btn { background: #28a745; color: #fff; padding: 8px 15px; font-size: 14px; margin: 5px; }
+  .green-btn:hover { background: #218838; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+  .purple-btn { background: #6f42c1; color: #fff; padding: 8px 15px; font-size: 14px; margin: 5px; }
+  .purple-btn:hover { background: #5a36a9; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+  .contract { border: 1px solid #ccc; padding: 25px; margin-top: 25px; font-size: 15px; border-radius: 8px; background: #fff; }
+  .contract p { margin: 10px 0; }
+  #signatureModal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); justify-content: center; align-items: center; }
+  .modal-content { background: #fff; padding: 25px; border-radius: 10px; text-align: center; max-width: 500px; width: 95%; box-shadow: 0 5px 25px rgba(0,0,0,0.3); }
+  #signatureCanvas { border: 2px solid #007BFF; width: 100%; height: 200px; touch-action: none; border-radius: 5px; background: #f9f9f9; }
+  .two-columns { display: flex; justify-content: flex-start; margin-top: 20px; gap: 40px; flex-wrap: wrap; }
+  .col { width: 100%; max-width: 400px; }
+  .signature-container { margin: 25px 0; padding: 20px; border: 2px dashed #007BFF; border-radius: 8px; text-align: center; background: #f0f8ff; }
+  .signature-preview-container { position: relative; margin: 20px 0; min-height: 120px; display: flex; justify-content: center; }
+  #signaturePreview { border: 1px solid #aaa; display: block; margin: 0 auto; max-width: 100%; background-color: white; border-radius: 5px; width: 350px; height: 120px; }
+  .signature-btn { padding: 16px 30px; font-size: 18px; margin: 15px auto; display: block; width: 100%; max-width: 350px; }
+  .signature-instruction { color: #666; font-style: italic; margin-top: 10px; }
   @media (max-width: 768px) {
-    body {
-      margin: 10px;
-    }
-    
-    .container {
-      padding: 15px;
-    }
-    
-    .two-columns {
-      gap: 20px;
-    }
-    
-    input, select {
-      max-width: 100%;
-    }
-    
-    .contract {
-      padding: 15px;
-    }
-    
-    .signature-container {
-      padding: 15px;
-    }
-    
-    #signaturePreview {
-      width: 100%;
-      height: 100px;
-    }
+    body { margin: 10px; }
+    .container { padding: 15px; }
+    .two-columns { gap: 20px; }
+    input, select { max-width: 100%; }
+    .contract { padding: 15px; }
+    .signature-container { padding: 15px; }
+    #signaturePreview { width: 100%; height: 100px; }
   }
-  
   @media (max-width: 480px) {
-    button {
-      width: 100%;
-    }
-    
-    .modal-content {
-      padding: 15px;
-      width: 95%;
-    }
-    
-    .signature-btn {
-      padding: 14px 20px;
-      font-size: 16px;
-    }
+    button { width: 100%; }
+    .modal-content { padding: 15px; width: 95%; }
+    .signature-btn { padding: 14px 20px; font-size: 16px; }
   }
-  
-  /* Form element focus styles */
-  input:focus, select:focus {
-    outline: none;
-    border-color: #007BFF;
-    box-shadow: 0 0 0 3px rgba(0,123,255,0.25);
-  }
-  
-  /* Modal button styles */
-  .modal-content button {
-    margin: 10px 5px;
-    padding: 10px 15px;
-    display: inline-block;
-    width: auto;
-  }
-  
-  /* Success message */
-  .success-message {
-    color: #28a745;
-    font-weight: 600;
-    text-align: center;
-    margin-top: 10px;
-  }
-  
-  /* Optional field indicator */
-  .optional {
-    color: #6c757d;
-    font-weight: normal;
-    font-size: 0.9em;
-  }
-  
-  /* Required field indicator */
-  .required-field::after {
-    content: " *";
-    color: #FF4136;
-  }
-
-  /* Translation section */
-  .translation-section {
-    margin-top: 20px;
-    padding: 15px;
-    background-color: #f8f9fa;
-    border-radius: 5px;
-    border-left: 4px solid #28a745;
-  }
-
-  .translation-buttons {
-    display: flex;
-    flex-wrap: wrap;
-    margin: 10px 0;
-  }
-
-  .language-option {
-    display: none;
-  }
-
-  .language-option.active {
-    display: block;
-  }
-
-  /* Loading spinner */
-  .loading-spinner {
-    display: none;
-    border: 4px solid #f3f3f3;
-    border-top: 4px solid #007BFF;
-    border-radius: 50%;
-    width: 30px;
-    height: 30px;
-    animation: spin 1s linear infinite;
-    margin: 10px auto;
-  }
-
-  @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-  }
-
-  /* Email status messages */
-  .email-status {
-    text-align: center;
-    padding: 10px;
-    margin: 10px 0;
-    border-radius: 5px;
-    display: none;
-  }
-
-  .email-success {
-    background-color: #d4edda;
-    color: #155724;
-    border: 1px solid #c3e6cb;
-  }
-
-  .email-error {
-    background-color: #f8d7da;
-    color: #721c24;
-    border: 1px solid #f5c6cb;
-  }
-
-  .email-warning {
-    background-color: #fff3cd;
-    color: #856404;
-    border: 1px solid #ffeeba;
-  }
+  input:focus, select:focus { outline: none; border-color: #007BFF; box-shadow: 0 0 0 3px rgba(0,123,255,0.25); }
+  .modal-content button { margin: 10px 5px; padding: 10px 15px; display: inline-block; width: auto; }
+  .success-message { color: #28a745; font-weight: 600; text-align: center; margin-top: 10px; }
+  .optional { color: #6c757d; font-weight: normal; font-size: 0.9em; }
+  .required-field::after { content: " *"; color: #FF4136; }
+  .translation-section { margin-top: 20px; padding: 15px; background-color: #f8f9fa; border-radius: 5px; border-left: 4px solid #28a745; }
+  .translation-buttons { display: flex; flex-wrap: wrap; margin: 10px 0; }
+  .language-option { display: none; }
+  .language-option.active { display: block; }
+  .loading-spinner { display: none; border: 4px solid #f3f3f3; border-top: 4px solid #007BFF; border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; margin: 10px auto; }
+  @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+  .email-status { text-align: center; padding: 10px; margin: 10px 0; border-radius: 5px; display: none; }
+  .email-success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+  .email-error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+  .email-warning { background-color: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
 </style>
 </head>
 <body>
@@ -398,15 +87,9 @@
 
     <label data-es="Unidades:" data-sv="Enheter:" data-en="Units:">Unidades: <span class="optional" data-es="(opcional)" data-sv="(valfri)" data-en="(optional)">(opcional)</span></label>
     <select id="units">
-      <option value="1" selected>1</option>
-      <option value="2">2</option>
-      <option value="3">3</option>
-      <option value="4">4</option>
-      <option value="5">5</option>
-      <option value="6">6</option>
-      <option value="7">7</option>
-      <option value="8">8</option>
-      <option value="9">9</option>
+      <option value="1" selected>1</option><option value="2">2</option><option value="3">3</option>
+      <option value="4">4</option><option value="5">5</option><option value="6">6</option>
+      <option value="7">7</option><option value="8">8</option><option value="9">9</option>
     </select>
 
     <label data-es="Fecha Desde:" data-sv="Datum Från:" data-en="Date From:">Fecha Desde: <span class="optional" data-es="(opcional)" data-sv="(valfri)" data-en="(optional)">(opcional)</span></label>
@@ -427,7 +110,6 @@
   <div id="contractSection" style="display:none;">
     <h2 data-es="Sicars Contrato de Alquiler de Coches" data-sv="Sicars Biluthyrningsavtal" data-en="Sicars Car Rental Contract">Sicars Contrato de Alquiler de Coches</h2>
     <div class="contract" id="contractContent">
-
       <p><strong data-es="NIF/CIF:" data-sv="NIF/CIF:" data-en="NIF/CIF:">NIF/CIF:</strong> B72700586</p>
       <p><strong data-es="NOMBRE:" data-sv="NAMN:" data-en="NAME:">NOMBRE:</strong> SIMON ABBOUD</p>
       <p><strong data-es="NIE:" data-sv="NIE:" data-en="NIE:">NIE:</strong> Y-6074507-Z</p>
@@ -506,7 +188,6 @@
       <label data-es="Ingrese su email para recibir el contrato:" data-sv="Ange din e-post för att få kontraktet:" data-en="Enter your email to receive the contract:">Ingrese su email para recibir el contrato:</label>
       <input type="email" id="clientEmail" placeholder="su@email.com">
       
-      <!-- Email sending status area -->
       <div class="loading-spinner" id="emailLoading"></div>
       <div class="email-status" id="emailSuccess">
         <p data-es="✔ Contrato enviado correctamente. Por favor, revise su carpeta de correo no deseado si no puede encontrarlo en su bandeja de entrada." 
@@ -525,11 +206,11 @@
       
       <button class="blue-btn" onclick="sendEmail()" data-es="Enviar Contrato por Email" data-sv="Skicka Kontrakt via E-post" data-en="Send Contract via Email">Enviar Contrato por Email</button>
       <button class="red-btn" onclick="downloadPDF()" data-es="Descargar Contrato como PDF" data-sv="Ladda ner Kontrakt som PDF" data-en="Download Contract as PDF">Descargar Contrato como PDF</button>
+      <button class="green-btn" style="margin-top:25px;" onclick="goBackToForm()" data-es="Volver al Formulario" data-sv="Tillbaka till Formulär" data-en="Back to Form">Volver al Formulario</button>
     </div>
   </div>
 </div>
 
-<!-- Signature Modal -->
 <div id="signatureModal">
   <div class="modal-content">
     <h3 data-es="Dibuje Su Firma" data-sv="Rita Din Namnteckning" data-en="Draw Your Signature">Dibuje Su Firma</h3>
@@ -544,44 +225,90 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
 <script>
-// Init EmailJS
 emailjs.init("Ct10aXWOv0UiEYTK42");
 
 let canvas, ctx, drawing = false, signatureData = null;
 let currentLanguage = 'es';
 
+/* =============== URL / ROUTING ADDITIONS ===============
+   We add a query parameter ?contract=slug when contract is generated.
+   If you prefer hash, replace updateUrl() logic with:
+     const newUrl = window.location.pathname + '#contract';
+   ------------------------------------------------------ */
+function buildContractSlug(name) {
+  return (name || 'contrato')
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g,'-')
+    .replace(/^-+|-+$/g,'');
+}
+
+function updateUrl(clientName) {
+  const slug = buildContractSlug(clientName);
+  const params = new URLSearchParams(window.location.search);
+  params.set('contract', slug);
+  // Push new state (so Back works)
+  history.pushState({ contract: true, slug }, '', window.location.pathname + '?' + params.toString());
+}
+
+function clearContractUrl() {
+  const params = new URLSearchParams(window.location.search);
+  if (params.has('contract')) {
+    params.delete('contract');
+    history.pushState({ contract: false }, '', window.location.pathname + (params.toString() ? '?' + params.toString() : ''));
+  }
+}
+
+function goBackToForm() {
+  signatureData = null; // optional: forget signature when going back
+  document.getElementById("contractSection").style.display = "none";
+  document.getElementById("formSection").style.display = "block";
+  clearContractUrl();
+  // Optionally reset the form: document.getElementById("formSection").querySelector('form')...
+}
+
+/* Handle Back/Forward navigation */
+window.addEventListener('popstate', function() {
+  const params = new URLSearchParams(window.location.search);
+  if (params.has('contract')) {
+    // Show contract section (NOTE: Without persisted data, may show placeholders)
+    document.getElementById("formSection").style.display = "none";
+    document.getElementById("contractSection").style.display = "block";
+  } else {
+    document.getElementById("contractSection").style.display = "none";
+    document.getElementById("formSection").style.display = "block";
+  }
+});
+
+/* On initial load, if ?contract= is present, show contract view.
+   Since the data isn't persisted, you could extend this by saving
+   form data to localStorage before switching. */
+document.addEventListener('DOMContentLoaded', () => {
+  const params = new URLSearchParams(window.location.search);
+  if (params.has('contract')) {
+    // Attempt to show existing contract view (will be blank unless you persist data)
+    document.getElementById("formSection").style.display = "none";
+    document.getElementById("contractSection").style.display = "block";
+  }
+});
+
 function changeLanguage(lang) {
   currentLanguage = lang;
-  
-  // Update all elements with data attributes
   document.querySelectorAll('[data-es]').forEach(element => {
     if (element.tagName === 'INPUT' && element.type !== 'button' && element.type !== 'submit') {
-      // Handle input placeholders
       if (element.hasAttribute('placeholder')) {
         const placeholderText = element.getAttribute(`data-${lang}`) || element.getAttribute('data-es');
         element.setAttribute('placeholder', placeholderText);
       }
     } else {
-      // Handle text content for other elements
       const text = element.getAttribute(`data-${lang}`) || element.getAttribute('data-es');
-      if (element.tagName === 'OPTION') {
-        element.textContent = text;
-      } else {
-        element.textContent = text;
-      }
+      element.textContent = text;
     }
   });
-  
-  // Update language options visibility
   document.querySelectorAll('.language-option').forEach(option => {
-    if (option.getAttribute('data-lang') === lang) {
-      option.classList.add('active');
-    } else {
-      option.classList.remove('active');
-    }
+    if (option.getAttribute('data-lang') === lang) option.classList.add('active');
+    else option.classList.remove('active');
   });
-  
-  // Update optional text spans
   document.querySelectorAll('.optional').forEach(element => {
     const text = element.getAttribute(`data-${lang}`) || element.getAttribute('data-es');
     element.textContent = text;
@@ -591,67 +318,44 @@ function changeLanguage(lang) {
 function generateContract() {
   const clientName = document.getElementById('clientName').value || "";
   const phone = document.getElementById('phone').value || "";
-
-  // Solo se requiere nombre y teléfono
   if (!clientName || !phone) {
     alert(currentLanguage === 'es' ? "Por favor, proporcione al menos el nombre y el número de teléfono" : 
           currentLanguage === 'sv' ? "Vänligen ange åtminstone namn och telefonnummer" :
           "Please provide at least name and phone number");
     return;
   }
-
-  // Obtener otros valores (opcionales)
   const license = document.getElementById('license').value || "";
   const brand = document.getElementById('brand').value || "";
   const plate = document.getElementById('plate').value || "";
-  const units = document.getElementById('units').value || "1"; // Default to 1
+  const units = document.getElementById('units').value || "1";
   const from = document.getElementById('from').value || "";
   const to = document.getElementById('to').value || "";
   const total = document.getElementById('total').value || "";
   const iva = document.getElementById('iva').value || "";
 
-  document.getElementById("showClientName").textContent = clientName || 
-    (currentLanguage === 'es' ? "No proporcionado" : 
-     currentLanguage === 'sv' ? "Inte angivet" : "Not provided");
-  
-  document.getElementById("showPhone").textContent = phone || 
-    (currentLanguage === 'es' ? "No proporcionado" : 
-     currentLanguage === 'sv' ? "Inte angivet" : "Not provided");
-  
-  document.getElementById("showLicense").textContent = license || 
-    (currentLanguage === 'es' ? "No proporcionado" : 
-     currentLanguage === 'sv' ? "Inte angivet" : "Not provided");
-  
-  document.getElementById("showBrand").textContent = brand || 
-    (currentLanguage === 'es' ? "No proporcionado" : 
-     currentLanguage === 'sv' ? "Inte angivet" : "Not provided");
-  
-  document.getElementById("showPlate").textContent = plate || 
-    (currentLanguage === 'es' ? "No proporcionado" : 
-     currentLanguage === 'sv' ? "Inte angivet" : "Not provided");
-  
+  const np = currentLanguage === 'es' ? "No proporcionado" : currentLanguage === 'sv' ? "Inte angivet" : "Not provided";
+
+  document.getElementById("showClientName").textContent = clientName || np;
+  document.getElementById("showPhone").textContent = phone || np;
+  document.getElementById("showLicense").textContent = license || np;
+  document.getElementById("showBrand").textContent = brand || np;
+  document.getElementById("showPlate").textContent = plate || np;
   document.getElementById("showUnits").textContent = units || "1";
-  
-  document.getElementById("showFrom").textContent = from || 
-    (currentLanguage === 'es' ? "No proporcionado" : 
-     currentLanguage === 'sv' ? "Inte angivet" : "Not provided");
-  
-  document.getElementById("showTo").textContent = to || 
-    (currentLanguage === 'es' ? "No proporcionado" : 
-     currentLanguage === 'sv' ? "Inte angivet" : "Not provided");
-  
-  document.getElementById("showTotal").textContent = total ? parseFloat(total).toFixed(2) : 
-    (currentLanguage === 'es' ? "No proporcionado" : 
-     currentLanguage === 'sv' ? "Inte angivet" : "Not provided");
-  
-  document.getElementById("showIVA").textContent = iva ? parseFloat(iva).toFixed(2) : 
-    (currentLanguage === 'es' ? "No proporcionado" : 
-     currentLanguage === 'sv' ? "Inte angivet" : "Not provided");
+  document.getElementById("showFrom").textContent = from || np;
+  document.getElementById("showTo").textContent = to || np;
+  document.getElementById("showTotal").textContent = total ? parseFloat(total).toFixed(2) : np;
+  document.getElementById("showIVA").textContent = iva ? parseFloat(iva).toFixed(2) : np;
 
   document.getElementById("formSection").style.display = "none";
   document.getElementById("contractSection").style.display = "block";
-  
-  // Inicializar el canvas de vista previa de la firma
+  initSignaturePreview();
+  // Update URL
+  updateUrl(clientName);
+  // OPTIONAL: Persist form data for reload/back (uncomment to use)
+  // localStorage.setItem('contractData', JSON.stringify({clientName, phone, license, brand, plate, units, from, to, total, iva}));
+}
+
+function initSignaturePreview() {
   const preview = document.getElementById("signaturePreview");
   preview.width = preview.offsetWidth;
   preview.height = 120;
@@ -665,10 +369,9 @@ function generateContract() {
   pctx.font = "14px Arial";
   pctx.fillStyle = "#999";
   pctx.textAlign = "center";
-  
   const placeholderText = currentLanguage === 'es' ? "La firma aparecerá aquí" :
-                         currentLanguage === 'sv' ? "Signaturen visas här" :
-                         "Signature will appear here";
+                          currentLanguage === 'sv' ? "Signaturen visas här" :
+                          "Signature will appear here";
   pctx.fillText(placeholderText, preview.width/2, preview.height/2 + 5);
 }
 
@@ -676,10 +379,7 @@ function openSignature() {
   document.getElementById("signatureModal").style.display = "flex";
   setupCanvas();
 }
-
-function closeSignature() { 
-  document.getElementById("signatureModal").style.display = "none"; 
-}
+function closeSignature() { document.getElementById("signatureModal").style.display = "none"; }
 
 function setupCanvas() {
   canvas = document.getElementById("signatureCanvas");
@@ -693,137 +393,76 @@ function setupCanvas() {
 
   function getXY(e) {
     const rect = canvas.getBoundingClientRect();
-    if(e.touches && e.touches.length>0) return {
-      x: e.touches[0].clientX - rect.left, 
-      y: e.touches[0].clientY - rect.top
-    };
-    return {
-      x: e.offsetX || (e.clientX - rect.left), 
-      y: e.offsetY || (e.clientY - rect.top)
-    };
+    if(e.touches && e.touches.length>0) return { x: e.touches[0].clientX - rect.left, y: e.touches[0].clientY - rect.top };
+    return { x: e.offsetX || (e.clientX - rect.left), y: e.offsetY || (e.clientY - rect.top) };
   }
-
-  function startDraw(e){
-    drawing=true;
-    const {x,y}=getXY(e);
-    ctx.beginPath();
-    ctx.moveTo(x,y);
-    e.preventDefault();
-  }
-  
-  function draw(e){
-    if(!drawing) return;
-    const {x,y}=getXY(e);
-    ctx.lineTo(x,y);
-    ctx.stroke();
-    e.preventDefault();
-  }
-  
-  function stopDraw(e){
-    drawing=false;
-    e.preventDefault();
-  }
-
-  canvas.onmousedown = startDraw; 
-  canvas.onmousemove = draw; 
-  canvas.onmouseup = stopDraw; 
-  canvas.onmouseout = stopDraw;
-  canvas.ontouchstart = startDraw; 
-  canvas.ontouchmove = draw; 
-  canvas.ontouchend = stopDraw;
-  
-  // Borrar cualquier dibujo previo
+  function startDraw(e){ drawing=true; const {x,y}=getXY(e); ctx.beginPath(); ctx.moveTo(x,y); e.preventDefault(); }
+  function draw(e){ if(!drawing) return; const {x,y}=getXY(e); ctx.lineTo(x,y); ctx.stroke(); e.preventDefault(); }
+  function stopDraw(e){ drawing=false; e.preventDefault(); }
+  canvas.onmousedown = startDraw; canvas.onmousemove = draw; canvas.onmouseup = stopDraw; canvas.onmouseout = stopDraw;
+  canvas.ontouchstart = startDraw; canvas.ontouchmove = draw; canvas.ontouchend = stopDraw;
   clearSignature();
 }
 
-function clearSignature() { 
-  if(ctx){ 
-    ctx.clearRect(0, 0, canvas.width, canvas.height); 
-  } 
-}
+function clearSignature() { if(ctx){ ctx.clearRect(0, 0, canvas.width, canvas.height); } }
 
 function saveSignature() {
-  // Comprobar si hay realmente una firma
   const blank = document.createElement('canvas');
-  blank.width = canvas.width;
-  blank.height = canvas.height;
-  
+  blank.width = canvas.width; blank.height = canvas.height;
   if(canvas.toDataURL() === blank.toDataURL()) {
     alert(currentLanguage === 'es' ? "Por favor, proporcione su firma primero" : 
           currentLanguage === 'sv' ? "Vänligen ange din signatur först" :
           "Please provide your signature first");
     return;
   }
-  
   signatureData = canvas.toDataURL();
   document.getElementById("signedStatus").style.display = "block";
-
   const preview = document.getElementById("signaturePreview");
   const pctx = preview.getContext("2d");
-  preview.width = preview.offsetWidth;
-  preview.height = 120;
+  preview.width = preview.offsetWidth; preview.height = 120;
   const img = new Image();
-  img.onload = () => { 
-    pctx.clearRect(0, 0, preview.width, preview.height); 
-    pctx.drawImage(img, 0, 0, preview.width, preview.height); 
-  };
+  img.onload = () => { pctx.clearRect(0, 0, preview.width, preview.height); pctx.drawImage(img, 0, 0, preview.width, preview.height); };
   img.src = signatureData;
-
   closeSignature();
 }
 
 function downloadPDF() {
-  if(!signatureData) { 
+  if(!signatureData) {
     alert(currentLanguage === 'es' ? "¡Por favor, firme el contrato primero!" : 
           currentLanguage === 'sv' ? "Vänligen signera kontraktet först!" :
-          "Please sign the contract first!"); 
-    return; 
+          "Please sign the contract first!");
+    return;
   }
-  
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
-
   doc.setFontSize(12);
-
-  // Información del encabezado
   doc.text("NIF/CIF: B72700586", 10, 20);
   doc.text("NOMBRE: SIMON ABBOUD", 10, 27);
   doc.text("NIE: Y-6074507-Z", 10, 34);
   doc.text("Dirección: Calle Antonio Ruiz Corces 31", 10, 41);
   doc.text("Teléfono office: +34642482422", 10, 48);
   doc.text("Simón: +46735043440", 10, 55);
-
   doc.text("CONTRATO DE ALQUILER DE COCHES", 10, 70);
-
-  // Diseño de dos columnas en PDF
   const leftX = 10, rightX = 110, yStart = 85, lineHeight = 7;
-
   doc.text(`Cliente: ${document.getElementById('showClientName').textContent}`, leftX, yStart);
   doc.text(`Teléfono: ${document.getElementById('showPhone').textContent}`, leftX, yStart + lineHeight);
   doc.text(`Licencia: ${document.getElementById('showLicense').textContent}`, leftX, yStart + lineHeight*2);
   doc.text(`Marca del coche: ${document.getElementById('showBrand').textContent}`, leftX, yStart + lineHeight*3);
   doc.text(`Matrícula: ${document.getElementById('showPlate').textContent}`, leftX, yStart + lineHeight*4);
-
   doc.text(`Unidades: ${document.getElementById('showUnits').textContent}`, rightX, yStart);
   doc.text(`Fecha inicio: ${document.getElementById('showFrom').textContent}`, rightX, yStart + lineHeight);
   doc.text(`Fecha finalización: ${document.getElementById('showTo').textContent}`, rightX, yStart + lineHeight*2);
   doc.text(`IVA: ${document.getElementById('showIVA').textContent} €`, rightX, yStart + lineHeight*3);
   doc.text(`Precio Total: ${document.getElementById('showTotal').textContent} €`, rightX, yStart + lineHeight*4);
-
-  // Términos y Condiciones en PDF
-  let detailsEndY = Math.max(yStart + lineHeight*4, yStart + lineHeight*4);
+  let detailsEndY = yStart + lineHeight*4;
   let termsTitleY = detailsEndY + 15;
   doc.setFont(undefined, "bold");
   doc.text("Términos y Condiciones", 10, termsTitleY);
   doc.setFont(undefined, "normal");
-
   const terms = "Términos y condiciones:\n- Uso del vehículo: El vehículo no se utilizará con fines ilegales ni se conducirá bajo la influencia de drogas o alcohol.\n- Límite de edad: El inquilino confirma que tiene al menos 23 años. Los inquilinos menores de 23 años no son elegibles para alquilar ni conducir el automóvil.\n- Licencia de conducir: El inquilino debe tener una licencia de conducir válida y estar preparado para mostrarla en el momento del alquiler.\n- Restricciones geográficas: El arrendatario acepta que el vehículo sólo puede circular dentro de un radio de 250 km desde Torrevieja, España. Si desea circular fuera de esta zona, deberá obtener autorización previa por escrito.\n- Política de devolución: El vehículo debe devolverse en la fecha de finalización especificada en las mismas condiciones en que se recibió, excluyendo el desgaste normal. Las devoluciones tardías pueden estar sujetas a cargos adicionales.\n- Responsabilidad por Daños: Si el vehículo es conducido por un conductor menor de 23 años, ese conductor será personalmente responsable de cualquier daño al vehículo de alquiler y de cualquier daño a terceros.";
-
   const wrapped = doc.splitTextToSize(terms, 180);
   const termsBodyY = termsTitleY + 8;
   doc.text(wrapped, 10, termsBodyY);
-
-  // Aceptación + firma
   const afterTermsY = termsBodyY + wrapped.length * 6 + 8;
   doc.setFont(undefined, "bold");
   doc.text("Aceptación de Términos", 10, afterTermsY);
@@ -831,8 +470,6 @@ function downloadPDF() {
   const acceptText = "Al firmar a continuación, ambas partes reconocen y aceptan todos los términos y condiciones de este contrato.";
   const acceptWrapped = doc.splitTextToSize(acceptText, 180);
   doc.text(acceptWrapped, 10, afterTermsY + 8);
-
-  // Líneas de firma
   const sigLineY = afterTermsY + 8 + acceptWrapped.length * 6 + 30;
   doc.text("Firma del Cliente", 10, sigLineY - 20);
   doc.text("___________________________", 10, sigLineY);
@@ -842,8 +479,6 @@ function downloadPDF() {
     doc.addImage(signatureData, 'PNG', sigX, sigLineY - 15, sigWidth, 15);
   }
   doc.text("___________________________", 130, sigLineY);
-  
-  // Texto de la empresa
   doc.setFontSize(10);
   doc.text("SICARS", 145, sigLineY - 25);
   doc.text("ALQUILER - VENTA - COMPRA", 145, sigLineY - 20);
@@ -851,7 +486,6 @@ function downloadPDF() {
   doc.text("03183 Torrevieja", 145, sigLineY - 10);
   doc.text("Y 6074507Z", 145, sigLineY - 5);
   doc.text("Tel. +34 642 482 422", 145, sigLineY);
-
   const clientName = document.getElementById('showClientName').textContent || "contrato";
   doc.save(`Contrato_${clientName.replace(/\s+/g,'_')}.pdf`);
 }
@@ -864,19 +498,15 @@ function sendEmail() {
           "Please enter your email!");
     return;
   }
-  
   if (!signatureData) {
     alert(currentLanguage === 'es' ? "¡Por favor, firme el contrato primero!" : 
           currentLanguage === 'sv' ? "Vänligen signera kontraktet först!" :
           "Please sign the contract first!");
     return;
   }
-
-  // Show loading spinner and hide any previous messages
   document.getElementById('emailLoading').style.display = 'block';
   document.getElementById('emailSuccess').style.display = 'none';
   document.getElementById('emailError').style.display = 'none';
-
   emailjs.send(
     'service_a709mgr',
     'template_2ifazx8',
@@ -896,32 +526,20 @@ function sendEmail() {
     },
     'Ct6aXWOv0UiEYTK42'
   ).then(
-    function(response) { 
-      // Hide loading spinner
+    function() {
       document.getElementById('emailLoading').style.display = 'none';
-      
-      // Show success message
       document.getElementById('emailSuccess').style.display = 'block';
-      
-      // Update success message based on language
       changeLanguage(currentLanguage);
     },
-    function(error) { 
-      // Hide loading spinner
+    function(error) {
       document.getElementById('emailLoading').style.display = 'none';
-      
-      // Show error message
       document.getElementById('emailError').style.display = 'block';
-      
-      // Update error message based on language
       changeLanguage(currentLanguage);
-      
-      console.error(error); 
+      console.error(error);
     }
   );
 }
 
-// Asegurar que las funciones existen en window para los manejadores onclick en línea
 window.generateContract = generateContract;
 window.openSignature = openSignature;
 window.closeSignature = closeSignature;
@@ -930,6 +548,7 @@ window.saveSignature = saveSignature;
 window.downloadPDF = downloadPDF;
 window.sendEmail = sendEmail;
 window.changeLanguage = changeLanguage;
+window.goBackToForm = goBackToForm;
 </script>
 </body>
 </html>
