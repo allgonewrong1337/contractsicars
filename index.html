@@ -26,14 +26,12 @@
   .two-columns { display: flex; justify-content: flex-start; margin-top: 20px; gap: 40px; flex-wrap: wrap; }
   .col { width: 100%; max-width: 400px; }
 
-  /* Signature block */
   .signature-container { margin: 25px 0; padding: 20px; border: 2px dashed #007BFF; border-radius: 8px; text-align: center; background: #f0f8ff; }
   .signature-preview-container { position: relative; margin: 20px 0; min-height: 120px; display: flex; justify-content: center; }
   #signaturePreview { border: 1px solid #aaa; display: block; margin: 0 auto; max-width: 100%; background-color: white; border-radius: 5px; width: 350px; height: 120px; }
   .signature-btn { padding: 16px 30px; font-size: 18px; margin: 15px auto; display: block; width: 100%; max-width: 350px; }
   .signature-instruction { color: #666; font-style: italic; margin-top: 10px; }
 
-  /* Language flag buttons */
   .translation-buttons { display: flex; flex-wrap: wrap; gap: 10px; margin: 15px 0 5px; }
   .flag-btn {
     background: none;
@@ -83,7 +81,6 @@
   .modal-content button { margin: 10px 5px; padding: 10px 15px; display: inline-block; width: auto; }
   .success-message { color: #28a745; font-weight: 600; text-align: center; margin-top: 10px; }
   .optional { color: #6c757d; font-weight: normal; font-size: 0.9em; }
-  .required-field::after { content: " *"; color: #FF4136; }
   .language-option { display: none; }
   .language-option.active { display: block; }
 
@@ -169,7 +166,6 @@
         </div>
       </div>
 
-      <!-- FLAG STYLE LANGUAGE SWITCH -->
       <div class="translation-buttons">
         <button class="flag-btn active" data-lang-btn="es" onclick="changeLanguage('es')" aria-label="Español">🇪🇸</button>
         <button class="flag-btn" data-lang-btn="sv" onclick="changeLanguage('sv')" aria-label="Svenska">🇸🇪</button>
@@ -244,7 +240,6 @@
   </div>
 </div>
 
-<!-- Signature Modal -->
 <div id="signatureModal">
   <div class="modal-content">
     <h3 data-es="Dibuje Su Firma" data-sv="Rita Din Namnteckning" data-en="Draw Your Signature">Dibuje Su Firma</h3>
@@ -264,7 +259,7 @@ emailjs.init("Ct10aXWOv0UiEYTK42");
 let canvas, ctx, drawing = false, signatureData = null;
 let currentLanguage = 'es';
 
-/* URL / routing additions from previous version */
+/* URL / routing additions */
 function buildContractSlug(name) {
   return (name || 'contrato').toLowerCase().trim().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');
 }
@@ -305,7 +300,6 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById("formSection").style.display = "none";
     document.getElementById("contractSection").style.display = "block";
   }
-  // Ensure initial active flag styling
   updateActiveFlag(currentLanguage);
 });
 
@@ -446,69 +440,147 @@ function saveSignature() {
   closeSignature();
 }
 
-function downloadPDF() {
+/* --------- MOBILE FRIENDLY PDF DOWNLOAD --------- */
+function isIOS() {
+  return /iPad|iPhone|iPod/.test(navigator.userAgent) || 
+         (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1); // iPadOS in desktop mode
+}
+function sanitizeFileName(name) {
+  // Remove accents and non safe characters
+  return name.normalize('NFD')
+             .replace(/[\u0300-\u036f]/g,'')
+             .replace(/[^\w\-\.]+/g,'_')
+             .replace(/_+/g,'_')
+             .replace(/^_+|_+$/g,'');
+}
+
+async function downloadPDF() {
   if(!signatureData) {
     alert(currentLanguage === 'es' ? "¡Por favor, firme el contrato primero!" : 
           currentLanguage === 'sv' ? "Vänligen signera kontraktet först!" :
           "Please sign the contract first!");
     return;
   }
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF();
-  doc.setFontSize(12);
-  doc.text("NIF/CIF: B72700586", 10, 20);
-  doc.text("NOMBRE: SIMON ABBOUD", 10, 27);
-  doc.text("NIE: Y-6074507-Z", 10, 34);
-  doc.text("Dirección: Calle Antonio Ruiz Corces 31", 10, 41);
-  doc.text("Teléfono office: +34642482422", 10, 48);
-  doc.text("Simón: +46735043440", 10, 55);
-  doc.text("CONTRATO DE ALQUILER DE COCHES", 10, 70);
-  const leftX = 10, rightX = 110, yStart = 85, lineHeight = 7;
-  doc.text(`Cliente: ${document.getElementById('showClientName').textContent}`, leftX, yStart);
-  doc.text(`Teléfono: ${document.getElementById('showPhone').textContent}`, leftX, yStart + lineHeight);
-  doc.text(`Licencia: ${document.getElementById('showLicense').textContent}`, leftX, yStart + lineHeight*2);
-  doc.text(`Marca del coche: ${document.getElementById('showBrand').textContent}`, leftX, yStart + lineHeight*3);
-  doc.text(`Matrícula: ${document.getElementById('showPlate').textContent}`, leftX, yStart + lineHeight*4);
-  doc.text(`Unidades: ${document.getElementById('showUnits').textContent}`, rightX, yStart);
-  doc.text(`Fecha inicio: ${document.getElementById('showFrom').textContent}`, rightX, yStart + lineHeight);
-  doc.text(`Fecha finalización: ${document.getElementById('showTo').textContent}`, rightX, yStart + lineHeight*2);
-  doc.text(`IVA: ${document.getElementById('showIVA').textContent} €`, rightX, yStart + lineHeight*3);
-  doc.text(`Precio Total: ${document.getElementById('showTotal').textContent} €`, rightX, yStart + lineHeight*4);
-  let detailsEndY = yStart + lineHeight*4;
-  let termsTitleY = detailsEndY + 15;
-  doc.setFont(undefined, "bold");
-  doc.text("Términos y Condiciones", 10, termsTitleY);
-  doc.setFont(undefined, "normal");
-  const terms = "Términos y condiciones:\n- Uso del vehículo: El vehículo no se utilizará con fines ilegales ni se conducirá bajo la influencia de drogas o alcohol.\n- Límite de edad: El inquilino confirma que tiene al menos 23 años. Los inquilinos menores de 23 años no son elegibles para alquilar ni conducir el automóvil.\n- Licencia de conducir: El inquilino debe tener una licencia de conducir válida y estar preparado para mostrarla en el momento del alquiler.\n- Restricciones geográficas: El arrendatario acepta que el vehículo sólo puede circular dentro de un radio de 250 km desde Torrevieja, España. Si desea circular fuera de esta zona, deberá obtener autorización previa por escrito.\n- Política de devolución: El vehículo debe devolverse en la fecha de finalización especificada en las mismas condiciones en que se recibió, excluyendo el desgaste normal. Las devoluciones tardías pueden estar sujetas a cargos adicionales.\n- Responsabilidad por Daños: Si el vehículo es conducido por un conductor menor de 23 años, ese conductor será personalmente responsable de cualquier daño al vehículo de alquiler y de cualquier daño a terceros.";
-  const wrapped = doc.splitTextToSize(terms, 180);
-  const termsBodyY = termsTitleY + 8;
-  doc.text(wrapped, 10, termsBodyY);
-  const afterTermsY = termsBodyY + wrapped.length * 6 + 8;
-  doc.setFont(undefined, "bold");
-  doc.text("Aceptación de Términos", 10, afterTermsY);
-  doc.setFont(undefined, "normal");
-  const acceptText = "Al firmar a continuación, ambas partes reconocen y aceptan todos los términos y condiciones de este contrato.";
-  const acceptWrapped = doc.splitTextToSize(acceptText, 180);
-  doc.text(acceptWrapped, 10, afterTermsY + 8);
-  const sigLineY = afterTermsY + 8 + acceptWrapped.length * 6 + 30;
-  doc.text("Firma del Cliente", 10, sigLineY - 20);
-  doc.text("___________________________", 10, sigLineY);
-  if (signatureData) {
-    const sigWidth = 60;
-    const sigX = 10 + (70 - sigWidth) / 2;
-    doc.addImage(signatureData, 'PNG', sigX, sigLineY - 15, sigWidth, 15);
+  try {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+
+    doc.setFontSize(12);
+    doc.text("NIF/CIF: B72700586", 10, 20);
+    doc.text("NOMBRE: SIMON ABBOUD", 10, 27);
+    doc.text("NIE: Y-6074507-Z", 10, 34);
+    doc.text("Dirección: Calle Antonio Ruiz Corces 31", 10, 41);
+    doc.text("Teléfono office: +34642482422", 10, 48);
+    doc.text("Simón: +46735043440", 10, 55);
+    doc.text("CONTRATO DE ALQUILER DE COCHES", 10, 70);
+    const leftX = 10, rightX = 110, yStart = 85, lineHeight = 7;
+    doc.text(`Cliente: ${document.getElementById('showClientName').textContent}`, leftX, yStart);
+    doc.text(`Teléfono: ${document.getElementById('showPhone').textContent}`, leftX, yStart + lineHeight);
+    doc.text(`Licencia: ${document.getElementById('showLicense').textContent}`, leftX, yStart + lineHeight*2);
+    doc.text(`Marca del coche: ${document.getElementById('showBrand').textContent}`, leftX, yStart + lineHeight*3);
+    doc.text(`Matrícula: ${document.getElementById('showPlate').textContent}`, leftX, yStart + lineHeight*4);
+    doc.text(`Unidades: ${document.getElementById('showUnits').textContent}`, rightX, yStart);
+    doc.text(`Fecha inicio: ${document.getElementById('showFrom').textContent}`, rightX, yStart + lineHeight);
+    doc.text(`Fecha finalización: ${document.getElementById('showTo').textContent}`, rightX, yStart + lineHeight*2);
+    doc.text(`IVA: ${document.getElementById('showIVA').textContent} €`, rightX, yStart + lineHeight*3);
+    doc.text(`Precio Total: ${document.getElementById('showTotal').textContent} €`, rightX, yStart + lineHeight*4);
+    let detailsEndY = yStart + lineHeight*4;
+    let termsTitleY = detailsEndY + 15;
+    doc.setFont(undefined, "bold");
+    doc.text("Términos y Condiciones", 10, termsTitleY);
+    doc.setFont(undefined, "normal");
+
+    const terms = "Términos y condiciones:\n- Uso del vehículo: El vehículo no se utilizará con fines ilegales ni se conducirá bajo la influencia de drogas o alcohol.\n- Límite de edad: El inquilino confirma que tiene al menos 23 años. Los inquilinos menores de 23 años no son elegibles para alquilar ni conducir el automóvil.\n- Licencia de conducir: El inquilino debe tener una licencia de conducir válida y estar preparado para mostrarla en el momento del alquiler.\n- Restricciones geográficas: El arrendatario acepta que el vehículo sólo puede circular dentro de un radio de 250 km desde Torrevieja, España. Si desea circular fuera de esta zona, deberá obtener autorización previa por escrito.\n- Política de devolución: El vehículo debe devolverse en la fecha de finalización especificada en las mismas condiciones en que se recibió, excluyendo el desgaste normal. Las devoluciones tardías pueden estar sujetas a cargos adicionales.\n- Responsabilidad por Daños: Si el vehículo es conducido por un conductor menor de 23 años, ese conductor será personalmente responsable de cualquier daño al vehículo de alquiler y de cualquier daño a terceros.";
+    const wrapped = doc.splitTextToSize(terms, 180);
+    const termsBodyY = termsTitleY + 8;
+    doc.text(wrapped, 10, termsBodyY);
+    const afterTermsY = termsBodyY + wrapped.length * 6 + 8;
+    doc.setFont(undefined, "bold");
+    doc.text("Aceptación de Términos", 10, afterTermsY);
+    doc.setFont(undefined, "normal");
+    const acceptText = "Al firmar a continuación, ambas partes reconocen y aceptan todos los términos y condiciones de este contrato.";
+    const acceptWrapped = doc.splitTextToSize(acceptText, 180);
+    doc.text(acceptWrapped, 10, afterTermsY + 8);
+    const sigLineY = afterTermsY + 8 + acceptWrapped.length * 6 + 30;
+    doc.text("Firma del Cliente", 10, sigLineY - 20);
+    doc.text("___________________________", 10, sigLineY);
+    if (signatureData) {
+      const sigWidth = 60;
+      const sigX = 10 + (70 - sigWidth) / 2;
+      doc.addImage(signatureData, 'PNG', sigX, sigLineY - 15, sigWidth, 15);
+    }
+    doc.text("___________________________", 130, sigLineY);
+    doc.setFontSize(10);
+    doc.text("SICARS", 145, sigLineY - 25);
+    doc.text("ALQUILER - VENTA - COMPRA", 145, sigLineY - 20);
+    doc.text("C/ Antonio Ruiz Covés N° 31", 145, sigLineY - 15);
+    doc.text("03183 Torrevieja", 145, sigLineY - 10);
+    doc.text("Y 6074507Z", 145, sigLineY - 5);
+    doc.text("Tel. +34 642 482 422", 145, sigLineY);
+
+    let clientName = document.getElementById('showClientName').textContent || "contrato";
+    clientName = sanitizeFileName(clientName.replace(/\s+/g,'_'));
+    const fileName = `Contrato_${clientName || 'cliente'}.pdf`;
+
+    // Try standard blob download
+    const blob = doc.output('blob');
+    const blobUrl = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = blobUrl;
+    a.download = fileName;
+    a.style.display = 'none';
+    document.body.appendChild(a);
+
+    // Some mobile browsers need a small delay
+    setTimeout(() => {
+      try {
+        a.click();
+        console.log("Attempted direct download");
+        setTimeout(() => {
+          document.body.removeChild(a);
+          URL.revokeObjectURL(blobUrl);
+        }, 1500);
+      } catch(e) {
+        console.warn("Direct click failed, fallback:", e);
+        document.body.removeChild(a);
+        URL.revokeObjectURL(blobUrl);
+        fallbackOpen(doc, fileName);
+      }
+    }, 50);
+
+    // iOS Safari older fallback (open in new tab)
+    if (isIOS()) {
+      // Extra fallback after a delay if file not saved
+      setTimeout(() => {
+        // Heuristic: if user hasn't left page (no event), offer open view fallback
+        // (You could add a user prompt here if desired)
+      }, 2000);
+    }
+
+  } catch (err) {
+    console.error("PDF generation error:", err);
+    alert(currentLanguage === 'es' ? "No se pudo generar el PDF" :
+          currentLanguage === 'sv' ? "Kunde inte skapa PDF" :
+          "Could not generate PDF");
   }
-  doc.text("___________________________", 130, sigLineY);
-  doc.setFontSize(10);
-  doc.text("SICARS", 145, sigLineY - 25);
-  doc.text("ALQUILER - VENTA - COMPRA", 145, sigLineY - 20);
-  doc.text("C/ Antonio Ruiz Covés N° 31", 145, sigLineY - 15);
-  doc.text("03183 Torrevieja", 145, sigLineY - 10);
-  doc.text("Y 6074507Z", 145, sigLineY - 5);
-  doc.text("Tel. +34 642 482 422", 145, sigLineY);
-  const clientName = document.getElementById('showClientName').textContent || "contrato";
-  doc.save(`Contrato_${clientName.replace(/\s+/g,'_')}.pdf`);
 }
+
+function fallbackOpen(doc, fileName) {
+  try {
+    // Open in new window/tab as data URL (works on most iOS)
+    const dataUrl = doc.output('dataurlstring');
+    const win = window.open("");
+    if (win) {
+      win.document.write("<iframe width='100%' height='100%' src='" + dataUrl + "'></iframe>");
+    } else {
+      // Last resort: just change location
+      window.location.href = dataUrl;
+    }
+  } catch(e) {
+    console.error("Fallback open failed:", e);
+  }
+}
+/* --------- END MOBILE FRIENDLY PDF DOWNLOAD --------- */
 
 function sendEmail() {
   const clientEmail = document.getElementById("clientEmail").value;
